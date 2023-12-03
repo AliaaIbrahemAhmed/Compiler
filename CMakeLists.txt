@@ -9,4 +9,6 @@ add_executable(Compiler
         Node.cpp
         Node.h
         State.cpp
-        State.h main.cpp)
+        State.h main.cpp
+        NFATODFA.h
+        NFATODFA.cpp)
