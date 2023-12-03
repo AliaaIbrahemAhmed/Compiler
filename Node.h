@@ -14,6 +14,7 @@ public:
     void addState(State state);
 
     explicit Node(const set <State> &states);
+    Node() : states{} {}
 
 };
 template <>
