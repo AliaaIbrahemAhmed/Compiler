@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include<stack>
 #include<set>
+#include <iostream>
+#include <unordered_set>
+#include <queue>
 
 using namespace std;
 
@@ -17,9 +20,10 @@ private:
 
 
 public:
-	TRANSITION_TABLE nfaToDfa(Node start_node);
+	pair<TRANSITION_TABLE, Node> nfaToDfa(Node startNode, vector<string>& inputs);
 	explicit NFATODFA(const TRANSITION_TABLE& transtionTable);
-	Node e_closure(Node& node);
+	void printTransitionTable(const TRANSITION_TABLE& transtionTable);
+	Node eClosure(Node& node);
 
 };
 
