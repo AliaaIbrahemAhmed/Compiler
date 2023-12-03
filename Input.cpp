@@ -2,14 +2,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <utility>
 
 using namespace std;
 
 
 Input::Input(string inputFilePath) {
-    this->inputFilePath = inputFilePath;
-    this->getInput();
+    this->inputFilePath = std::move(inputFilePath);
     this->inputSize = 0;
+    this->lexicalRules = *new LexicalRules();
+    this->getInput();
 
 }
 
@@ -25,17 +27,18 @@ void Input::getInput() {
     std::string line;
     while (std::getline(inputFile, line)) {
         inputs.push_back(line);
+        if (!this->lexicalRules.parseString(line)) {
+            std::cerr << "Invalid Latex Rule" << std::endl;
+            return;
+        }
         inputSize++;
     }
+    this->lexicalRules.showREs();
+    this->lexicalRules.showRDs();
+    this->lexicalRules.showKWs();
+    this->lexicalRules.showPunctuations();
+
 
     inputFile.close();
-    for (int i = 0; i < inputSize; i++) {
-        cout << inputs[i] << endl;
-    }
-
-}
-
-void Input::parseInput() {
-
 }
 

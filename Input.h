@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "LexicalRules.h"
 
 using namespace std;
 class Input {
@@ -10,9 +11,9 @@ class Input {
 public:
     string inputFilePath;
     vector<string> inputs;
+    LexicalRules lexicalRules;
     int inputSize;
     void getInput();
-    void parseInput();
     Input(string inputFilePath);
 };
 
