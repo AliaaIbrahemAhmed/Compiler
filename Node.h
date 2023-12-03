@@ -2,15 +2,18 @@
 #define COMPILER_NODE_H
 
 #include <set>
+#include <vector>
 
+using namespace std;
 class Node {
 public:
     set <State> states;
-
     size_t getHash() const;
 
     // Overridden equality operator
     bool operator==(const Node& other) const;
+    bool operator<(const Node& other) const;
+
     void addState(State state);
 
     explicit Node(const set <State> &states);
