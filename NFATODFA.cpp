@@ -72,10 +72,7 @@ pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<str
 		unprocessedStates.pop();
 		// find transtion for each state in a node 
 		for (string input : inputs) {
-
-
 			set<State> statesEClosure;
-
 			for (State state : curNode.states) {
 				// get transitions of each state in tranisiton table 
 				Node key({ state });
