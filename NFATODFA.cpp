@@ -5,8 +5,12 @@ using namespace std;
 Node NFATODFA::eClosure(Node& node)
 {
 	set<State> states = node.states;
-	set<State> closure;
+// Outputting the contents of the set
+    for (const auto& state : states) {
+        std::cout <<"states"<< &state << " ";
+    }	set<State> closure;
 	stack<State>stack;
+
 	for (State s : states) {
 		closure.insert(s);
 		stack.push(s);
