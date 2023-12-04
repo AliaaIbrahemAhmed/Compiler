@@ -19,15 +19,15 @@ Node NFATODFA::eClosure(Node& node)
 		statesSet.insert(fromState);
 		Node key(statesSet);
 		//get transtion of state
-		TRANSITIONS transitions = this->transitionTable[key];
+		NFA_TRANSITIONS transitions = this->transitionTable[key];
 		//check for epsilon transition		
-		if (transitions.find(EPSILON) != transitions.end()){
-			for (State toState : transitions[EPSILON].states) {
-			//add state if it does not exist in closure.
-				if (closure.find(toState) == closure.end()) {
-					closure.insert(toState);
-					stack.push(toState);
-				}
+		auto range = transitions.equal_range(EPSILON);
+		for (auto it = range.first; it != range.second; it++) {
+			State toState = *it->second.states.begin();
+		    //add state if it does not exist in closure.
+			if (closure.find(toState) == closure.end()) {
+				closure.insert(toState);
+				stack.push(toState);
 			}
 		}
 	}
@@ -35,9 +35,32 @@ Node NFATODFA::eClosure(Node& node)
 
 };
 
-pair<TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
+Node NFATODFA::getRepresentingNode(Node node)
 {
-	TRANSITION_TABLE DFA;
+	State endingState;
+	endingState.priority = -1;
+	bool isEndNode = false;
+	string name = "";
+	for (State state : node.states) {
+		name += state.name;
+		if (!state.isEndState) continue;
+		
+		isEndNode = true;
+		if (state.priority > endingState.priority) {
+			endingState = state;
+		}
+	}
+	//return a node containing the state with max priority.
+	if (isEndNode) {
+		return *new Node({ endingState });
+	}
+	//return new representing node
+	return *new Node({ *new State(0, 0, name) });
+}
+
+pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
+{
+	DFA_TRANSITION_TABLE DFA;
 	queue<Node> unprocessedStates;
 	unordered_set<Node> processedStates;
 	Node node = this->eClosure(startNode);
@@ -49,38 +72,46 @@ pair<TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<string>
 		unprocessedStates.pop();
 		// find transtion for each state in a node 
 		for (string input : inputs) {
+
+
 			set<State> statesEClosure;
+
 			for (State state : curNode.states) {
 				// get transitions of each state in tranisiton table 
 				Node key({ state });
-				TRANSITIONS transitions = this->transitionTable[key];
+				NFA_TRANSITIONS transitions = this->transitionTable[key];
 				//skip if a transition does not exist
-				if (transitions.find(input) == transitions.end()) continue;
-				//find e closure of state 
-				set<State> stateEClosure = this->eClosure(transitions[input]).states;
-				//add e closure to the new state
-				statesEClosure.insert(stateEClosure.begin(), stateEClosure.end());
+				auto range = transitions.equal_range(input);
+				//iterate over all states 
+				for (auto it = range.first; it != range.second; it++) {
+					//find e closure of state 
+					set<State> stateEClosure = this->eClosure(it->second).states;
+					//add e closure to the new state
+					statesEClosure.insert(stateEClosure.begin(), stateEClosure.end());
+				}
 				//add new node to a table if transistions are found
 			}
 			if (!statesEClosure.empty()) {
-				Node toNode = *new Node(statesEClosure);
-				DFA[curNode][input] = toNode;
+				Node toNode =  Node(statesEClosure);
+				Node reperesentingToNode = getRepresentingNode(toNode);
+				Node reperesentingFromNode = getRepresentingNode(curNode);
+				DFA[reperesentingFromNode][input] = reperesentingToNode;
 				// add node to unprocessed states if not visited
 				if (processedStates.find(toNode) == processedStates.end())
 					unprocessedStates.push(toNode);
 			}
 		}
 	}
-	pair<TRANSITION_TABLE, Node> res = { DFA, node };
+	pair<DFA_TRANSITION_TABLE, Node> res = { DFA, node };
 	return res;
 }
 
-NFATODFA::NFATODFA(const TRANSITION_TABLE& transtionTable)
+NFATODFA::NFATODFA(const NFA_TRANSITION_TABLE& transtionTable)
 {
 	this->transitionTable = transtionTable;
 }
 
-void NFATODFA::printTransitionTable(const TRANSITION_TABLE& transtionTable)
+void NFATODFA::printTransitionTable(const DFA_TRANSITION_TABLE& transtionTable)
 {
 	std::cout << "\nDFA Transition Table:\n";
 	for (auto it = transtionTable.begin(); it != transtionTable.end(); ++it) {
@@ -98,6 +129,8 @@ void NFATODFA::printTransitionTable(const TRANSITION_TABLE& transtionTable)
 	}
 
 };
+
+
 
 
 
