@@ -99,7 +99,7 @@ pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<str
 			}
 		}
 	}
-	pair<DFA_TRANSITION_TABLE, Node> res = { DFA, node };
+	pair<DFA_TRANSITION_TABLE, Node> res = { DFA, this->getRepresentingNode(node)};
 	return res;
 }
 
