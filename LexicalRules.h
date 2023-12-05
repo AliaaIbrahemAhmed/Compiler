@@ -12,19 +12,25 @@
 #include <set>
 
 using namespace std;
-
 class LexicalRules {
 public:
     unordered_map<string, string> regularDefinitions;
     unordered_map<string, string> regularExpressions;
     set<string> keyWords;
     set<string> punctuations;
+    set<string> reservedSymbols;
 
     LexicalRules();
 
-    void addRegularDefinitions(const string &lhs, string rhs);
+    bool isRegularDefinition(string s);
 
-    void addRegularExpressions(const string &lhs, string rhs);
+    bool isReserved(string s);
+
+    string clearReservedBackSlash(string s);
+
+    void addRegularDefinitions(string lhs, string rhs);
+
+    void addRegularExpressions(string lhs, string rhs);
 
     void addKeyWords(const string &keyWord);
 

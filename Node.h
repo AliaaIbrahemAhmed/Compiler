@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+#include "State.h"
 
 using namespace std;
 class Node {
@@ -16,7 +17,7 @@ public:
 
     void addState(State state);
 
-    explicit Node(const set <State> &states);
+    Node(const set <State> &states);
 
 };
 template <>

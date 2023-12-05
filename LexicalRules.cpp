@@ -3,14 +3,20 @@
 #include <utility>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
+#include "string"
+using namespace std;
+LexicalRules::LexicalRules() {
+    this->reservedSymbols = {"*", "(", ")", "+", "-","L", "|"};
+}
 
-LexicalRules::LexicalRules() = default;
-
-void LexicalRules::addRegularDefinitions(const string &lhs, string rhs) {
+void LexicalRules::addRegularDefinitions(string lhs, string rhs) {
+    //lhs.erase(std::remove_if(lhs.begin(), lhs.end(), ::isspace), lhs.end());
     this->regularDefinitions[lhs] = std::move(rhs);
 }
 
-void LexicalRules::addRegularExpressions(const string &lhs, string rhs) {
+void LexicalRules::addRegularExpressions(string lhs, string rhs) {
+    //lhs.erase(std::remove_if(lhs.begin(), lhs.end(), ::isspace), lhs.end());
     this->regularExpressions[lhs] = std::move(rhs);
 }
 
@@ -31,7 +37,9 @@ bool LexicalRules::parseString(string rule) {
     return false;
 }
 
+
 bool LexicalRules::isRE(string rule) {
+    // rule.erase(std::remove_if(rule.begin(), rule.end(), ::isspace), rule.end());
     size_t pos = rule.find(':');
     size_t pos2 = rule.find('=');
     if (pos != string::npos && pos < pos2) {
@@ -45,6 +53,7 @@ bool LexicalRules::isRE(string rule) {
 }
 
 bool LexicalRules::isRD(string rule) {
+    // rule.erase(std::remove_if(rule.begin(), rule.end(), ::isspace), rule.end());
     size_t pos = rule.find('=');
     size_t pos2 = rule.find(':');
     if (pos != string::npos && pos < pos2) {
@@ -71,6 +80,27 @@ bool LexicalRules::isKW(string rule) {
     return false;
 }
 
+bool LexicalRules::isReserved(string s) {
+    int i = 0;
+    while (i < s.size()) {
+        if (s[i] == '\\' && this->reservedSymbols.find((to_string(s[i + 1]))) != this->reservedSymbols.end() ){
+            i += 2;
+            continue;
+        } else if (s[i] == ' ') {
+            i += 1;
+            continue;
+        } else {
+            return false;
+        }
+        return true;
+    }
+}
+
+
+
+
+
+
 bool LexicalRules::isPunctuation(string rule) {
     if (rule.find('[') == 0) {
         // Punctuations
@@ -78,6 +108,7 @@ bool LexicalRules::isPunctuation(string rule) {
         istringstream iss(rule);
         string punctuation;
         while (iss >> punctuation) {
+            punctuation.erase(std::remove(punctuation.begin(), punctuation.end(), '\\'), punctuation.end());
             this->addPunctuations(punctuation);
         }
         return true;
@@ -110,6 +141,11 @@ void LexicalRules::showKWs() {
         cout << "KeyWord:  " << kw << endl;
     }
 }
+
+bool LexicalRules::isRegularDefinition(string s) {
+    return this->regularDefinitions.find(s) != this->regularDefinitions.end();
+}
+
 
 
 

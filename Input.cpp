@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "NFA.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -12,18 +13,14 @@ Input::Input(string inputFilePath) {
     this->inputSize = 0;
     this->lexicalRules = *new LexicalRules();
     this->getInput();
-
 }
 
 void Input::getInput() {
-
     std::ifstream inputFile(this->inputFilePath);
-
     if (!inputFile.is_open()) {
         std::cerr << "Error opening the file." << std::endl;
         return;
     }
-
     std::string line;
     while (std::getline(inputFile, line)) {
         inputs.push_back(line);
@@ -37,8 +34,11 @@ void Input::getInput() {
     this->lexicalRules.showRDs();
     this->lexicalRules.showKWs();
     this->lexicalRules.showPunctuations();
-
-
     inputFile.close();
 }
-
+/*
+ * this->lexicalRules.showREs();
+    this->lexicalRules.showRDs();
+    this->lexicalRules.showKWs();
+    this->lexicalRules.showPunctuations();
+ */
