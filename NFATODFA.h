@@ -15,7 +15,7 @@ using NFA_TRANSITION_TABLE = unordered_map<Node, NFA_TRANSITIONS>;
 using DFA_TRANSITION_TABLE = unordered_map<Node, DFA_TRANSITIONS>;
 
 
-#define EPSILON "\L"
+#define EPSILON "\\L"
 
 class NFATODFA {
 

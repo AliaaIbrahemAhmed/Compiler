@@ -9,4 +9,4 @@ add_executable(Compiler
         Node.cpp
         Node.h
         State.cpp
-        State.h main.cpp Input.cpp LexicalRules.h LexicalRules.cpp NFA.h NFA.cpp)
+        State.h main.cpp Input.cpp LexicalRules.h LexicalRules.cpp NFA.h NFA.cpp NFATODFA.h NFATODFA.cpp)

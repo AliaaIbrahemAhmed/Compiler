@@ -15,11 +15,11 @@ size_t Node::getHash() const {
 
 bool Node::operator==(const Node &other) const {
     return this->getHash() == other.getHash();
-}
+}/*
 bool Node::operator<(const Node &other) const {
     return this->states.size() <= other.states.size();
 }
-
+*/
 
 
 void Node::addState(State state) {
@@ -27,7 +27,7 @@ void Node::addState(State state) {
 
 }
 
-Node::Node(const set<State> &states) : states(states) {
+Node::Node(set<State> states) : states(states) {
     this->states = states;
 }
 
