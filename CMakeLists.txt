@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.20.2)
 project(Compiler)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -11,4 +11,4 @@ add_executable(Compiler
         State.cpp
         State.h main.cpp
         NFATODFA.h
-        NFATODFA.cpp)
+        NFATODFA.cpp Matcher.cpp Matcher.h example.c)
