@@ -3,6 +3,7 @@
 //
 #include "State.h"
 #include "Node.h"
+#include "NFATODFA.h"
 #include <unordered_map>
 #include<stack>
 #include<set>
@@ -14,18 +15,18 @@
 #define COMPILER_DFAMINIMIZATION_H
 using namespace std;
 
-using TRANSITIONS = unordered_map<string, Node>;
-using TRANSITION_TABLE = unordered_map<Node, TRANSITIONS>;
+using DFA_TRANSITION_TABLE = unordered_map<Node, DFA_TRANSITIONS>;
+using DFA_TRANSITIONS = unordered_map<string, Node>;
 #define EPSILON "\L"
 
 class DFAMinimization {
 
 private:
-    TRANSITION_TABLE transitionTable;
-
+    DFA_TRANSITION_TABLE  transitionTable;
 
 public:
-    pair<TRANSITION_TABLE, Node> minimization(Node startNode, vector<string>& inputs);
+    pair<DFA_TRANSITION_TABLE, Node>  minimization(const DFA_TRANSITION_TABLE& dfa);
+    /* goToSameGroup(set<set<Node>> &groups, Node a ,Node b, string s, const DFA_TRANSITION_TABLE& dfa);*/
 
 };
 
