@@ -262,7 +262,7 @@ pair<Node, Node> NFA::parseAND(const string &s) {
             ns.push_back(singleNodeNfa(i));
         }
     }
-
+    if (ns.size() == 1) return ns[0];
     return concatenation(ns);
 }
 
@@ -272,6 +272,7 @@ pair<Node, Node> NFA::parseOr(const string &s) {
     for (const auto &i: parsed) {
         nodes.push_back(parseAND(i));
     }
+    if (nodes.size() == 1) return nodes[0];
     return unionOP(nodes);
 }
 
@@ -383,7 +384,7 @@ pair<Node, Node> NFA::parse(string rule) {
                 s.emplace("");
             }
             s.top().push_back(c);
-            if (escapeMood) {
+            if (escapeMood && s.top() == "(" || s.top() == ")") {
                 s.top().push_back(' ');
             }
         }
@@ -403,6 +404,7 @@ pair<Node, Node> NFA::parse(string rule) {
         return parseOr(s.top());
     }
     vector<pair<Node, Node>> v = convertStackToVector(nodes);
+    if (v.size() == 1)return v[0];
     return concatenation(v);
 }
 
