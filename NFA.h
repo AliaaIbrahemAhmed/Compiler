@@ -45,10 +45,6 @@ public:
 
     pair<Node, Node> positiveClosure(const pair<Node, Node> &se, bool isEndState, int priority);
 
-
-
-    pair<Node, Node> singleNodeNfa(const string &s, bool isEndState, int priority);
-
     vector<pair<Node, Node>> convertStackToVector(stack<pair<Node, Node>> myStack);
 
 
@@ -58,7 +54,6 @@ public:
     bool isRange(const string &expression);
 
 
-    pair<Node, Node> range(const string &expression, bool isEndState, int priority);
 
     Node getRoot(const vector<pair<Node, Node>> &nodes);
 
@@ -87,6 +82,10 @@ public:
     pair<Node, Node> concatenation(vector<pair<Node, Node>> nodes, bool isEndState, int priority, string patternName);
 
     pair<Node, Node> parseOr(const string &s, bool isEndState, int priority, string patternName);
+
+    pair<Node, Node> range(const string &expression, bool isEndState, int priority, string patternName);
+
+    pair<Node, Node> singleNodeNfa(const string &string1, bool isEndState, int priority, string patternNAme);
 };
 
 
