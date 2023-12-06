@@ -35,14 +35,14 @@ Node NFATODFA::eClosure(Node& node)
 
 };
 
-Node NFATODFA::getRepresentingNode(Node node)
+Node NFATODFA::getRepresentingNode(Node node, int& count, unordered_map<Node, string>& nameMap)
 {
 	State endingState;
 	endingState.priority = -1;
 	bool isEndNode = false;
-	string name = "";
+	//string name = "";
 	for (State state : node.states) {
-		name += state.name;
+		//name += state.name;
 		if (!state.isEndState) continue;
 		
 		isEndNode = true;
@@ -51,11 +51,16 @@ Node NFATODFA::getRepresentingNode(Node node)
 		}
 	}
 	//return a node containing the state with max priority.
-	if (isEndNode) {
+	if (isEndNode) 
 		return *new Node({ endingState });
+	
+	if (nameMap.find(node) == nameMap.end()) {
+		string name = "q" + to_string(count++);
+		nameMap[node] = name;
+		return *new Node({ *new State(0, 0, name) });
 	}
 	//return new representing node
-	return *new Node({ *new State(0, 0, name) });
+	return *new Node({ *new State(0, 0, nameMap[node])});
 }
 
 pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
@@ -65,6 +70,9 @@ pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<str
 	unordered_set<Node> processedStates;
 	Node node = this->eClosure(startNode);
 	unprocessedStates.push(node);
+	unordered_map<Node, string> nameMap;
+	int count = 1;
+	nameMap[node] = "q0";
 	while (!unprocessedStates.empty()) {
 		Node curNode = unprocessedStates.front();
 		//mark node as visited
@@ -90,8 +98,8 @@ pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<str
 			}
 			if (!statesEClosure.empty()) {
 				Node toNode =  Node(statesEClosure);
-				Node reperesentingToNode = getRepresentingNode(toNode);
-				Node reperesentingFromNode = getRepresentingNode(curNode);
+				Node reperesentingToNode = getRepresentingNode(toNode, count, nameMap);
+				Node reperesentingFromNode = getRepresentingNode(curNode, count, nameMap);
 				DFA[reperesentingFromNode][input] = reperesentingToNode;
 				// add node to unprocessed states if not visited
 				if (processedStates.find(toNode) == processedStates.end())
@@ -99,7 +107,7 @@ pair<DFA_TRANSITION_TABLE, Node >  NFATODFA::nfaToDfa(Node startNode, vector<str
 			}
 		}
 	}
-	pair<DFA_TRANSITION_TABLE, Node> res = { DFA, this->getRepresentingNode(node)};
+	pair<DFA_TRANSITION_TABLE, Node> res = { DFA, this->getRepresentingNode(node, count, nameMap)};
 	return res;
 }
 
