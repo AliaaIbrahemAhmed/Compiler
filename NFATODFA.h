@@ -21,7 +21,7 @@ class NFATODFA {
 
 private:
 	NFA_TRANSITION_TABLE transitionTable;
-	Node getRepresentingNode(Node node);
+	Node getRepresentingNode(Node node, int& count, unordered_map<Node, string>& nameMap);
 
 
 public:
@@ -29,6 +29,8 @@ public:
 	explicit NFATODFA(const NFA_TRANSITION_TABLE& transtionTable);
 	void printTransitionTable(const DFA_TRANSITION_TABLE& transtionTable);
 	Node eClosure(Node& node);
+
+	
 
 };
 
