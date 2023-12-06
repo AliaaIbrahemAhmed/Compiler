@@ -10,30 +10,6 @@
 
 using namespace std;
 
-std::vector<std::string> parseFileCharByChar(const std::string& filename) {
-    std::vector<std::string> result;
-
-    // Open the file
-    std::ifstream file(filename);
-
-    // Check if the file is open
-    if (!file.is_open()) {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        return result;
-    }
-
-    // Read characters one by one
-    char c;
-    while (file.get(c)) {
-        // Store each character as a string
-        result.push_back(std::string(1, c));
-    }
-
-    // Close the file (not strictly necessary as it will be closed when 'file' goes out of scope)
-    file.close();
-
-    return result;
-}
 void printTransitionTable(TRANSITION_TABLE transtionTable) {
     std::cout << "\nNFA Transition Table:\n";
     for (auto &it: transtionTable) {
@@ -61,7 +37,8 @@ int main() {
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     printTransitionTable(nfa.nfa);
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
-    pair<DFA_TRANSITION_TABLE, Node> res = nfatodfa.nfaToDfa(nfa.root, {"a","b"});
+    std::vector<string> transitions(nfa.transitionSet.begin(), nfa.transitionSet.end());
+    pair<DFA_TRANSITION_TABLE, Node> res = nfatodfa.nfaToDfa(nfa.root, {transitions});
     nfatodfa.printTransitionTable(res.first);
 
 }

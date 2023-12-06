@@ -36,23 +36,21 @@ public:
     unordered_map<string, pair<Node, Node>> KWsNFA;
     unordered_map<string, pair<Node, Node>> punctuationsNFA;
     unordered_map<string, pair<Node, Node>> REsNFA;
-
+    set<string> transitionSet;
 
     string generateNewStateName();
 
+   // pair<Node, Node> kleeneClosure(const pair<Node, Node> &se, bool isEndState, int priority);
 
-    pair<Node, Node> kleeneClosure(const pair<Node, Node> &se, bool isEndState, int priority);
+//    pair<Node, Node> positiveClosure(const pair<Node, Node> &se, bool isEndState, int priority);
 
-    pair<Node, Node> positiveClosure(const pair<Node, Node> &se, bool isEndState, int priority);
-
-    vector<pair<Node, Node>> convertStackToVector(stack<pair<Node, Node>> myStack);
+    static vector<pair<Node, Node>> convertStackToVector(stack<pair<Node, Node>> myStack);
 
 
     NFA(LexicalRules &lexicalRules, Node root);
 
 
-    bool isRange(const string &expression);
-
+    static bool isRange(const string &expression);
 
 
     Node getRoot(const vector<pair<Node, Node>> &nodes);
@@ -63,29 +61,51 @@ public:
 
     vector<pair<Node, Node>> generatePunctuationsNFA();
 
-    pair<Node, Node>
+  /*  pair<Node, Node>
     eatBackward(string first, const pair<Node, Node> &last, stack<pair<Node, Node>> lastParsedAtStack, bool isEndState,
                 int priority);
 
-    pair<Node, Node> eatForward(const pair<Node, Node> &first, string last, bool isEndState, int priority);
+    pair<Node, Node> eatForward(const pair<Node, Node> &first, string last, bool isEndState, int priority);*/
 
     vector<pair<Node, Node>> parseRDs();
 
     vector<pair<Node, Node>> parseREs();
 
-    pair<Node, Node> parse(string rule, string patternName);
+ //   pair<Node, Node> parse(string rule, const string &patternName);
 
-    pair<Node, Node> unionOP(const vector<pair<Node, Node>> &nodes, bool isEndState, int priority, string patternName);
+    //pair<Node, Node> unionOP(const vector<pair<Node, Node>> &nodes, bool isEndState, int priority, string patternName);
 
-    pair<Node, Node> parseAND(const string &s, bool isEndState, int priority, string patternName);
+  //  pair<Node, Node> parseAND(const string &s, bool isEndState, int priority, const string &patternName);
 
-    pair<Node, Node> concatenation(vector<pair<Node, Node>> nodes, bool isEndState, int priority, string patternName);
+  //  pair<Node, Node> concatenation(vector<pair<Node, Node>> nodes, bool isEndState, int priority, string patternName);
 
-    pair<Node, Node> parseOr(const string &s, bool isEndState, int priority, string patternName);
+  //  pair<Node, Node> parseOr(const string &s, bool isEndState, int priority, string patternName);
 
-    pair<Node, Node> range(const string &expression, bool isEndState, int priority, string patternName);
+  //  pair<Node, Node> range(const string &expression, bool isEndState, int priority, const string &patternName);
 
-    pair<Node, Node> singleNodeNfa(const string &string1, bool isEndState, int priority, string patternNAme);
+  //  pair<Node, Node> singleNodeNfa(const string &string1, bool isEndState, int priority, const string &patternNAme);
+
+    pair<Node, Node> kleeneClosure(const pair<Node, Node> &se);
+
+    pair<Node, Node> positiveClosure(const pair<Node, Node> &se);
+
+    pair<Node, Node> concatenation(vector<pair<Node, Node>> nodes);
+
+    pair<Node, Node> unionOP(const vector<pair<Node, Node>> &nodes);
+
+    pair<Node, Node> singleNodeNfa(const string &string1);
+
+    pair<Node, Node> range(const string &expression);
+
+    pair<Node, Node> parseOr(const string &s);
+
+    pair<Node, Node> parseAND(const string &s);
+
+    pair<Node, Node> eatBackward(string first, const pair<Node, Node> &last, stack<pair<Node, Node>> lastParsedAtStack);
+
+    pair<Node, Node> eatForward(const pair<Node, Node> &first, string last);
+
+    pair<Node, Node> parse(string rule);
 };
 
 

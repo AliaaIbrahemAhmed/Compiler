@@ -10,7 +10,7 @@
 #include <vector>
 #include <unordered_map>
 #include <set>
-
+#include <stack>
 using namespace std;
 class LexicalRules {
 public:
@@ -19,6 +19,7 @@ public:
     set<string> keyWords;
     set<string> punctuations;
     set<string> reservedSymbols;
+    stack<string> rdOrder;
 
     LexicalRules();
 

@@ -5,9 +5,17 @@
 #include <iostream>
 #include <algorithm>
 #include "string"
+
 using namespace std;
+
 LexicalRules::LexicalRules() {
-    this->reservedSymbols = {"*", "(", ")", "+", "-","L", "|"};
+    this->reservedSymbols = {"*", "(", ")", "+", "-", "L", "|"};
+}
+
+string clearSpaces(string s) {
+    string withoutSpaces = s;
+    withoutSpaces.erase(remove_if(withoutSpaces.begin(), withoutSpaces.end(), ::isspace), withoutSpaces.end());
+    return withoutSpaces;
 }
 
 void LexicalRules::addRegularDefinitions(string lhs, string rhs) {
@@ -46,7 +54,7 @@ bool LexicalRules::isRE(string rule) {
         // Regular Expression
         string lhs = rule.substr(0, pos);
         string rhs = rule.substr(pos + 1);
-        this->addRegularExpressions(lhs, rhs);
+        this->addRegularExpressions(clearSpaces(lhs), rhs);
         return true;
     }
     return false;
@@ -60,7 +68,9 @@ bool LexicalRules::isRD(string rule) {
         // Regular Definition
         string lhs = rule.substr(0, pos);
         string rhs = rule.substr(pos + 1);
-        this->addRegularDefinitions(lhs, rhs);
+
+        this->addRegularDefinitions(clearSpaces(lhs), rhs);
+        this->rdOrder.push(clearSpaces(lhs));
         return true;
     }
     return false;
@@ -83,7 +93,7 @@ bool LexicalRules::isKW(string rule) {
 bool LexicalRules::isReserved(string s) {
     int i = 0;
     while (i < s.size()) {
-        if (s[i] == '\\' && this->reservedSymbols.find((to_string(s[i + 1]))) != this->reservedSymbols.end() ){
+        if (s[i] == '\\' && this->reservedSymbols.find((to_string(s[i + 1]))) != this->reservedSymbols.end()) {
             i += 2;
             continue;
         } else if (s[i] == ' ') {
@@ -95,10 +105,6 @@ bool LexicalRules::isReserved(string s) {
         return true;
     }
 }
-
-
-
-
 
 
 bool LexicalRules::isPunctuation(string rule) {
