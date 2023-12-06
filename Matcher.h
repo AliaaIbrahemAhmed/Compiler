@@ -22,7 +22,7 @@ public:
 
     vector<string> get_sym_table();
 
-    void match(vector<string> token,pair<TRANSITION_TABLE, Node > DFA);
+    void match(vector<string> token,pair<DFA_TRANSITION_TABLE, Node > DFA);
 
     void set_output_file_name(string output_file_name);
 
@@ -36,9 +36,9 @@ private:
 
     void write_output_file(string name);
 
-    bool error_recovery(string str, pair<TRANSITION_TABLE, Node > DFA);
+    bool error_recovery(string str, pair<DFA_TRANSITION_TABLE, Node > DFA);
 
-    bool fun(string str, pair<TRANSITION_TABLE, Node > DFA);
+    bool fun(string str, pair<DFA_TRANSITION_TABLE, Node > DFA);
 
 };
 

@@ -22,7 +22,7 @@ Matcher::~Matcher()
     //dtor
 }
 
-void Matcher::match(vector<string> token,pair<TRANSITION_TABLE, Node > DFA)
+void Matcher::match(vector<string> token,pair<DFA_TRANSITION_TABLE, Node > DFA)
 {
     /*for all tokens try to match them*/
     for(int i = 0 ; i < token.size() ; i++)
@@ -56,7 +56,7 @@ void Matcher::write_output_file(string name)
     }
 }
 
-bool Matcher::error_recovery(string str, pair<TRANSITION_TABLE, Node > DFA)
+bool Matcher::error_recovery(string str, pair<DFA_TRANSITION_TABLE, Node > DFA)
 {
     for(int i = 1 ; i < str.size() ; i++)
     {
@@ -70,14 +70,14 @@ bool Matcher::error_recovery(string str, pair<TRANSITION_TABLE, Node > DFA)
 }
 
 
-bool Matcher::fun(string str, pair<TRANSITION_TABLE, Node > DFA)
+bool Matcher::fun(string str, pair<DFA_TRANSITION_TABLE, Node > DFA)
 {
     /**try to match string str*/
     vector< set<State>> path;
     /*get the start state*/
     Node startNode=DFA.second;
     set<State> startState = startNode.states;
-    TRANSITION_TABLE  transitionTable=DFA.first;
+    DFA_TRANSITION_TABLE  transitionTable=DFA.first;
     set<State>  temp = startState;
     set<State> s = startState;
     path.push_back(temp);
