@@ -46,7 +46,7 @@ int main() {
     nfatodfa.printTransitionTable(res.DFA);
     cout<<"minimized transition table"<<"\n";
     nfatodfa.printTransitionTable(minimizedRes.DFA);
-    for (auto p : res.endMap) {
+    for (auto p : minimizedRes.endMap) {
         cout << p.first.states.begin()->name << " " << p.second << endl;
     }
 

@@ -10,8 +10,6 @@
 #include <unordered_set>
 #include <queue>
 #include <algorithm>
-#include <limits>
-
 #include "DFAMinimization.h"
 
 
@@ -42,11 +40,8 @@ Node move(const Node &currentNode, const string &a, const DFA_TRANSITION_TABLE &
     Node nextStates;
     DFA_TRANSITIONS transitions = getTransitionsOfCurrentNode(currentNode, dfa);
     for (const auto &t: transitions) {
-        if (a == "," ){
-            cout<<"input for move: "<<t.first<<" "<<a<<endl;
-            cout<<"ddd: "<<(t.first == a)<<endl;}
-            if (t.first == a) {
-           // cout<<"input for move: "<<t.first<<endl;
+        if (t.first == a) {
+            // cout<<"input for move: "<<t.first<<endl;
             nextStates.addState(*t.second.states.begin());
         }
     }
@@ -102,7 +97,7 @@ refinePartition(vector<unordered_set<Node>> &groups, const string &x, const DFA_
             subgroup.insert(nodes[it]);
             markedStates[nodes[it]] = true;
             /*this part is wrong as iterator jt has to have element after it 3la tool*/
-            for (size_t jt = it+1; jt < nodes.size(); ++jt) {
+            for (size_t jt = it + 1; jt < nodes.size(); ++jt) {
                 if (markedStates[nodes[jt]]) continue;
                 if (goToSameGroup(groups, nodes[it], nodes[jt], x, dfa)) {
                     subgroup.insert(nodes[jt]);
@@ -115,61 +110,58 @@ refinePartition(vector<unordered_set<Node>> &groups, const string &x, const DFA_
     return newGroups;
 }
 
-Node getRepresentativeNode(const unordered_set<Node> &T) {
-    Node repState;
-    //if (!T.begin()->states.begin()->isEndState)
-         repState = *T.begin();
-   // else {
-     //   int maxPriority = numeric_limits<int>::min(); // Initialize with minimum value
-       // for (const Node &node: T) {
-         //   for (const State &state: node.states) {
-           //     if (state.priority > maxPriority) {
-             //       maxPriority = state.priority;
-               //      repState = node; // Update repState with the node having max priority state
-                //}
-           // }
-        //}
-    //}
-    return repState;
-}
-
 // return the newStart Node and the Final transition table
 DfaResult
-mappingTransitions(const vector<unordered_set<Node>> &groups, const DFA_TRANSITION_TABLE &dfa,
-                   unordered_map<Node, string> &endingMap, const Node &startNode) {
+mappingTransitions(const vector<unordered_set<Node>> &groups, const DfaResult dfaResult) {
+    DFA_TRANSITION_TABLE dfa = dfaResult.DFA;
+    Node startNode = dfaResult.startNode;
+    unordered_map<Node, string> endingMap = dfaResult.endMap;
     unordered_map<Node, Node> representativeStates;
     unordered_map<Node, string> finalEndMap;
+    int dd = 0;
     for (const auto &T: groups) {
         //Renaming for the states will be the first element in the partition
         Node repState = *T.begin();
+        cout << "states " << T.begin()->states.begin()->name << endl;
         representativeStates[repState] = repState;
+        dd++;
         for (auto it = next(T.begin(), 1); it != T.end(); ++it) {
             representativeStates[*it] = repState;
         }
     }
+    cout << "representatioe numbers: " << dd << endl;
 
     DFA_TRANSITION_TABLE finalTransitions;
+    cout << "size of groups: " << groups.size() << endl;
     for (const auto &T: groups) {
-        Node repState = representativeStates[getRepresentativeNode(T)];
-        DFA_TRANSITIONS transitions = dfa.at(repState);
-        for (const auto &tran: transitions) {
-            DFA_TRANSITIONS temp;
+        Node repState = representativeStates[*T.begin()];
+        DFA_TRANSITIONS transitions;
+        dfa.find(repState);
+        if (dfa.find(repState) != dfa.end()) {
+            for (const auto &tran: transitions) {
+                DFA_TRANSITIONS temp;
+                if (repState.states.begin()->isEndState) {
+                    finalEndMap[repState] = endingMap[repState];
+                    //cout << "final ending state "<<finalEndMap[repState]<<"\n"<< "final ending state "<<endingMap[repState]<<"\n";
+                }
+                temp[tran.first] = representativeStates[tran.second];
+                // Insert temp transition into finalTransitions for repState without overwriting existing entries
+                finalTransitions[repState].insert(temp.begin(), temp.end());
+            }
+        }
+        else{
             if (repState.states.begin()->isEndState) {
                 finalEndMap[repState] = endingMap[repState];
                 //cout << "final ending state "<<finalEndMap[repState]<<"\n"<< "final ending state "<<endingMap[repState]<<"\n";
             }
-            temp[tran.first] = representativeStates[tran.second];
-            // Insert temp transition into finalTransitions for repState without overwriting existing entries
-            finalTransitions[repState].insert(temp.begin(), temp.end());
         }
+
 
     }
     DfaResult finalMapping;
     finalMapping.DFA = finalTransitions;
     finalMapping.startNode = representativeStates[startNode];
-    finalMapping.endMap=endingMap;
-    //pair<DFA_TRANSITION_TABLE, Node> res = make_pair(finalTransitions, representativeStates[startNode]);
-    //endingMap = finalTransitions;
+    finalMapping.endMap = endingMap;
     return finalMapping;
 }
 
@@ -218,10 +210,32 @@ DFA_TRANSITION_TABLE removeDeadStates(DFA_TRANSITION_TABLE &dfaTransitions, cons
     return dfaTransitions;
 }
 
-DfaResult DFAMinimization::minimization(const DfaResult& transitonMap) {
-    DFA_TRANSITION_TABLE dfa = transitonMap.DFA;
-    unordered_map<Node, string> endMap = transitonMap.endMap;
-    Node startNode = transitonMap.startNode;
+unordered_map<string, unordered_set<Node>>
+getEndingNodes(unordered_set<Node> subgroups, unordered_map<Node, string> endingMap) {
+    // Create a map to store subgroups based on the same ending mapping
+    unordered_map<string, unordered_set<Node>> endingSubgroups;
+    // Iterate through the endingMap to organize nodes into subgroups based on their endings
+    for (const auto &entry: endingMap) {
+        const Node &node = entry.first;
+        const string &ending = entry.second;
+
+        // Find or create a subgroup for the current ending
+        auto it = endingSubgroups.find(ending);
+        if (it == endingSubgroups.end()) {
+            // Ending subgroup doesn't exist, create a new one
+            endingSubgroups[ending] = {node};
+        } else {
+            // Add the node to the existing ending subgroup
+            endingSubgroups[ending].insert(node);
+        }
+    }
+    return endingSubgroups;
+};
+
+DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
+    DFA_TRANSITION_TABLE dfa = transitionMap.DFA;
+    unordered_map<Node, string> endMap = transitionMap.endMap;
+    Node startNode = transitionMap.startNode;
     vector<unordered_set<Node>> groups;
     unordered_map<string, unordered_set<Node>> subgroups;
     DFA_TRANSITION_TABLE minimizedTransitionTable;
@@ -234,7 +248,25 @@ DfaResult DFAMinimization::minimization(const DfaResult& transitonMap) {
             subgroups["NonAccepting"].insert(currentNode);
         }
     }
-    // Print the contents of the subgroups map
+    for (const auto &subgroup: subgroups) {
+        std::cout << "Subgroup: " << subgroup.first << std::endl;
+        std::cout << "States: ";
+        for (const auto &node: subgroup.second) {
+            std::cout << node.states.begin()->name << " ";
+        }
+        std::cout << std::endl;
+    }
+    unordered_map<string, unordered_set<Node>> endingSubgroups = getEndingNodes(subgroups["Accepting"], endMap);
+// Remove non-accepting nodes from subgroups
+    subgroups.erase("Accepting");
+
+// Insert new ending subgroups
+    for (const auto &entry: endingSubgroups) {
+        subgroups[entry.first] = entry.second;
+    }
+    for (const auto &entry: subgroups) {
+        groups.push_back(entry.second);
+    }
     /**for (const auto &subgroup: subgroups) {
         std::cout << "Subgroup: " << subgroup.first << std::endl;
         std::cout << "States: ";
@@ -243,19 +275,13 @@ DfaResult DFAMinimization::minimization(const DfaResult& transitonMap) {
         }
         std::cout << std::endl;
     }**/
+    std::cout << "size of subgroups group: " << subgroups.size() << std::endl;
 
-    for (const auto &entry: subgroups) {
-        groups.push_back(entry.second);
-    }
     bool changed = true;
     set<string> inputSymbols = getInputs(dfa);
-//for(auto x: inputSymbols) cout<<"input:" <<  x<<"\n";
-    //cout<<"inputsize:" << inputSymbols.size()<<"\n";
-    // Node nextState = move(startNode,*inputSymbols.begin(),dfa);
     while (changed) {
         vector<unordered_set<Node>> newGroups(groups.begin(), groups.end());
         for (const string &x: inputSymbols) {
-            //cout<<"inputentered:" << x<<"\n";
             newGroups = refinePartition(newGroups, x, dfa);
         }
         if (newGroups == groups) {
@@ -263,22 +289,20 @@ DfaResult DFAMinimization::minimization(const DfaResult& transitonMap) {
         }
         groups = newGroups;
     }
-    std::cout << "size1: " << groups.size() << std::endl;
-    DfaResult finalRes = mappingTransitions(groups, dfa, endMap, startNode);
+    int emptyyy = 0;
+    for (const auto &group: groups) {
+        std::cout << "Group:" << std::endl;
+        for (const auto &node: group) {
+            // Assuming each Node has a method 'getName()' to get its name
+            if (group.empty()) emptyyy++;
+            std::cout << node.states.begin()->name << std::endl;
+        }
+    }
+
+    std::cout << "size of final minimized group: " << groups.size() << std::endl;
+    DfaResult finalRes = mappingTransitions(groups, transitionMap);
     DFA_TRANSITION_TABLE temp = finalRes.DFA;
-    std::cout << "size1: " << finalRes.DFA.size() << std::endl;
     // have to change to DFA result yet
     finalRes.DFA = removeDeadStates(temp, startNode);
-    std::cout << "size12: " << finalRes.DFA.size() << std::endl;
-
-    // Print the contents of the subgroups map
-    /**for (const auto &subgroup: subgroups) {
-        std::cout << "Subgroup: " << subgroup.first << std::endl;
-        std::cout << "States: ";
-        for (const auto &node: subgroup.second) {
-            std::cout << node.states.begin()->name << " ";
-        }
-        std::cout << std::endl;
-    }**/
     return finalRes;
 }

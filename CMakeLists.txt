@@ -20,3 +20,5 @@ add_executable(Compiler
         Input.h
         DFAMinimization.h
         DFAMinimization.cpp)
+# Create or recreate the debug file
+file(WRITE debug.log "Debug information")
