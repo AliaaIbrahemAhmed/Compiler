@@ -7,33 +7,30 @@
 #include <map>
 #include <set>
 #include "State.h"
-#include "NFATODFA.h"
+#include "Node.h"
 
 
 using namespace std;
 
 Matcher::Matcher()
 {
-    //ctor
 }
 
 Matcher::~Matcher()
 {
-    //dtor
 }
 
-void Matcher::match(vector<string> token,pair<DFA_TRANSITION_TABLE, Node > DFA)
+void Matcher::match(vector<string> token,DfaResult DFA)
 {
-    /*for all tokens try to match them*/
     for(int i = 0 ; i < token.size() ; i++)
     {
-        this->fun(token[i], DFA);
+        cout << "Current Token:" << token[i] << endl;
+        this->matchToken(token[i], DFA);
     }
-    /*write in the output file*/
     write_output_file(this->output_file_name);
 }
 
-vector<string> Matcher::get_sym_table()
+set<string> Matcher::get_sym_table()
 {
     return this->symbol_table;
 }
@@ -45,23 +42,20 @@ void Matcher::set_output_file_name(string output_file_name)
 
 void Matcher::write_output_file(string name)
 {
-    /*open file*/
     ofstream myfile (name.c_str());
     if (myfile.is_open())
     {
-        /*write in file*/
         myfile << this->out;
-        /*close file*/
         myfile.close();
     }
 }
 
-bool Matcher::error_recovery(string str, pair<DFA_TRANSITION_TABLE, Node > DFA)
+bool Matcher::panic_mode_recovery(string str, DfaResult DFA)
 {
     for(int i = 1 ; i < str.size() ; i++)
     {
         string str1 = str.substr (i);
-        if(this->fun(str1,DFA))
+        if(this->matchToken(str1,DFA))
         {
             return true;
         }
@@ -70,84 +64,70 @@ bool Matcher::error_recovery(string str, pair<DFA_TRANSITION_TABLE, Node > DFA)
 }
 
 
-bool Matcher::fun(string str, pair<DFA_TRANSITION_TABLE, Node > DFA)
+bool Matcher::matchToken(string str, DfaResult DFA)
 {
-    /**try to match string str*/
-    vector< set<State>> path;
-    /*get the start state*/
-    Node startNode=DFA.second;
+    vector< Node> path;
+    Node startNode=DFA.startNode;
     set<State> startState = startNode.states;
-    DFA_TRANSITION_TABLE  transitionTable=DFA.first;
-    set<State>  temp = startState;
-    set<State> s = startState;
-    path.push_back(temp);
-    for(std::string::size_type i = 0; i < str.size(); ++i)
-    {
+    DFA_TRANSITION_TABLE   transitionTable=DFA.DFA;
+    unordered_map<Node, string> endMap=DFA.endMap;
+    Node tempNode=startNode;
+    cout << "states: " << tempNode.states.size() << endl;
+
+    path.push_back(tempNode);
+    for (char ch : str) {
         string x="";
-        x=str[i];
-        /*follow the sequance of str chars*/
-        temp=transitionTable[startNode][x].states;
-        /*add to path to save steps*/
-        path.push_back(temp);
+        x=ch;
+        cout << "Current char:" << x << endl;
+        tempNode=transitionTable[tempNode][x];
+        cout << "Current Node states num: " << tempNode.states.size() << endl;
+
+        path.push_back(tempNode);
     }
-    /*once exit str for loop = check if temp is acceptance state */
-    if(temp.begin()->isEndState)
+    if(tempNode.states.begin()->isEndState)
     {
-        /*get the type matched from temp name*/
-        string type = temp.begin()->name;
-        /*write pattern in the output file*/
+        string type = endMap[tempNode];
         this->out = this->out + type + '\n';
         if(type == "id")
         {
-            /*add to sym table*/
-            this->symbol_table.push_back(str);
+            this->symbol_table.insert(str);
         }
         return true;
     }
-    else                /*not matched*/
+    else
     {
-        /*try to go back until reach an acceptance state*/
         int iter = (int)path.size();
-        while(!temp.begin()->isEndState && iter > 0)
+        while(!tempNode.states.begin()->isEndState && iter > 0)
         {
-            temp = path[iter-1];
+            tempNode = path[iter-1];
             iter--;
         }
-        /*once i get there -> temp is accepted or iter = 0*/
-        if(temp.begin()->isEndState)
+        if(tempNode.states.begin()->isEndState)
         {
-            /*i reach to an acceptance state*/
-            /*get the type matched from temp name*/
-            string type = temp.begin()->name;
-            /*write pattern in the output file*/
+            string type = endMap[tempNode];
             this->out = this->out + type + '\n';
             if(type == "id")
             {
-                /*add to sym table*/
-                this->symbol_table.push_back(str);
+                this->symbol_table.insert(str);
             }
-            /*seperate str and call back fun again with the reminder*/
-            string reminder = str.substr (iter+1);
-            return this->fun(reminder, DFA);
+            string reminder = str.substr (iter);
+            return this->matchToken(reminder, DFA);
         }
-        else if(iter <= 0 && !temp.begin()->isEndState )           /* not matched or try delete from start */
+
+        else if(iter <= 0 && !tempNode.states.begin()->isEndState )
         {
 
-            if(this->error_recovery(str,DFA))
-            {
-                /*deleted from start done :D and write good in file*/
-            }
+            if(this->panic_mode_recovery(str,DFA))
+            {}
             else
             {
-                /*generate error to output file*/
-                this->out = this->out + "ERROR in symbol  " + str + '\n';
+                this->out = this->out + "invalid symbol  " + str + '\n';
                 return false;
             }
         }
         else
         {
-            /*generate error to output file*/
-            this->out = this->out + "ERROR in symbol  " + str + '\n';
+            this->out = this->out + "invalid symbol  " + str + '\n';
             return false;
         }
     }

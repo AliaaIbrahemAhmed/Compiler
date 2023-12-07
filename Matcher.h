@@ -8,9 +8,12 @@
 #include <vector>
 #include <map>
 #include <set>
-#include "NFATODFA.h"
 #include <iostream>
 #include <string>
+#include "Node.h"
+#include "NFATODFA.h"
+
+
 
 using namespace std;
 
@@ -20,9 +23,9 @@ public:
     Matcher();
     virtual ~Matcher();
 
-    vector<string> get_sym_table();
+    set<string> get_sym_table();
 
-    void match(vector<string> token,pair<DFA_TRANSITION_TABLE, Node > DFA);
+    void match(vector<string> token,DfaResult DFA);
 
     void set_output_file_name(string output_file_name);
 
@@ -30,15 +33,15 @@ protected:
 
 private:
 
-    vector<string> symbol_table;
+    set<string> symbol_table;
     string output_file_name;
     string out;
 
     void write_output_file(string name);
 
-    bool error_recovery(string str, pair<DFA_TRANSITION_TABLE, Node > DFA);
+    bool panic_mode_recovery(string str, DfaResult DFA);
 
-    bool fun(string str, pair<DFA_TRANSITION_TABLE, Node > DFA);
+    bool matchToken(string str, DfaResult DFA);
 
 };
 

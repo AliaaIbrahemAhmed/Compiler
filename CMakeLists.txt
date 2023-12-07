@@ -9,6 +9,6 @@ add_executable(Compiler
         Node.cpp
         Node.h
         State.cpp
+        Input.cpp LexicalRules.h LexicalRules.cpp NFA.h NFA.cpp NFATODFA.h NFATODFA.cpp
         State.h main.cpp
-        NFATODFA.h
-        NFATODFA.cpp Matcher.cpp Matcher.h example.c)
+         Matcher.cpp Matcher.h )

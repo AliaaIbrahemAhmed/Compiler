@@ -5,24 +5,29 @@
 
 using namespace std;
 
-size_t Node::getHash() const{
+size_t Node::getHash() const {
     string statesNames;
     for (State state: this->states) {
         statesNames += state.name;
     }
-    return std::hash < string > ()(statesNames);
+    return std::hash<string>()(statesNames);
 }
 
-bool Node::operator==(const Node& other) const {
+bool Node::operator==(const Node &other) const {
     return this->getHash() == other.getHash();
+}/*
+bool Node::operator<(const Node &other) const {
+    return this->states.size() <= other.states.size();
 }
+*/
+
 
 void Node::addState(State state) {
-this->states.insert(state);
+    this->states.insert(state);
 
 }
 
-Node::Node(const set<State> &states) : states(states) {
+Node::Node(set<State> states) : states(states) {
     this->states = states;
 }
 
