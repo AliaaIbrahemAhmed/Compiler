@@ -136,15 +136,55 @@ DFA_TRANSITION_TABLE mappingTransitions(const vector<unordered_set<Node>>& group
     }
     return finalTransitions;
 }
+// Function to mark reachable states from the initial state (DFS traversal)
+void markReachableStates(const Node& initialState, std::unordered_set<Node>& reachableStates, const DFA_TRANSITION_TABLE& dfaTransitions) {
+    std::unordered_set<Node> visited;
+    std::stack<Node> stack;
+    stack.push(initialState);
 
-void removeDeadStates(const DFA_TRANSITION_TABLE &dfa) {
-    unordered_map<Node, Node> representativeStates;
+    while (!stack.empty()) {
+        Node current = stack.top();
+        stack.pop();
 
+        if (visited.find(current) == visited.end()) {
+            visited.insert(current);
+            reachableStates.insert(current);
+
+            // Check transitions from the current state
+            auto it = dfaTransitions.find(current);
+            if (it != dfaTransitions.end()) {
+                for (const auto& transition : it->second) {
+                    Node nextState = transition.second;
+                    stack.push(nextState);
+                }
+            }
+        }
+    }
 }
-DFA_TRANSITION_TABLE DFAMinimization::minimization(const DFA_TRANSITION_TABLE &dfa) {
+
+DFA_TRANSITION_TABLE removeDeadStates(DFA_TRANSITION_TABLE &dfaTransitions, const Node &initialState) {
+    std::unordered_set<Node> reachableStates;
+    markReachableStates(initialState, reachableStates, dfaTransitions);
+
+    // Create a new transition table to hold the updated transitions
+    DFA_TRANSITION_TABLE updatedTransitions;
+
+    // Copy transitions for reachable states to the updated table
+    for (const auto &entry : dfaTransitions) {
+        if (reachableStates.find(entry.first) != reachableStates.end()) {
+            updatedTransitions.insert(entry);
+        }
+    }
+    // Replace the original table with the updated transitions
+    dfaTransitions = updatedTransitions;
+    return dfaTransitions;
+}
+
+DFA_TRANSITION_TABLE DFAMinimization::minimization(const DFA_TRANSITION_TABLE &dfa, const Node startNode) {
     vector<unordered_set<Node>> groups;
     unordered_map<string, unordered_set<Node>> subgroups;
-    pair<DFA_TRANSITION_TABLE, Node> minimizedTransitionTable;
+    DFA_TRANSITION_TABLE minimizedTransitionTable;
+
     for (const auto &transition: dfa) {
         Node currentNode = transition.first;
         if (currentNode.states.begin()->isEndState) {
@@ -179,6 +219,8 @@ DFA_TRANSITION_TABLE DFAMinimization::minimization(const DFA_TRANSITION_TABLE &d
         }
         groups = newGroups;
     }
-    DFA_TRANSITION_TABLE finalDfaTable = mappingTransitions(groups, dfa);
+    DFA_TRANSITION_TABLE temp = mappingTransitions(groups, dfa);
+    DFA_TRANSITION_TABLE finalDfaTable = removeDeadStates(temp, startNode);
+
     return finalDfaTable;
 }

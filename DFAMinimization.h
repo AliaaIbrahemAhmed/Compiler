@@ -25,7 +25,7 @@ private:
     DFA_TRANSITION_TABLE  transitionTable;
 
 public:
-    DFA_TRANSITION_TABLE  minimization(const DFA_TRANSITION_TABLE& dfa);
+    DFA_TRANSITION_TABLE  minimization(const DFA_TRANSITION_TABLE& dfa, const Node StartNode);
     /* goToSameGroup(set<set<Node>> &groups, Node a ,Node b, string s, const DFA_TRANSITION_TABLE& dfa);*/
 
 };
