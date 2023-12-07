@@ -41,6 +41,7 @@ int main() {
     DFAMinimization DFAminimization;
     std::vector<string> transitions(nfa.transitionSet.begin(), nfa.transitionSet.end());
     DfaResult res = nfatodfa.nfaToDfa(nfa.root, {transitions});
+    cout<<"transition table with size("<<res.DFA.size()<<")"<<res.endMap.size()<<"\n";
     DfaResult minimizedRes = DFAminimization.minimization(res);
 
     nfatodfa.printTransitionTable(res.DFA);
