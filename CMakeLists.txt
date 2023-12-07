@@ -11,4 +11,12 @@ add_executable(Compiler
         State.cpp
         State.h main.cpp
         NFATODFA.h
-        NFATODFA.cpp)
+        NFATODFA.cpp
+        NFA.cpp
+        NFA.h
+        LexicalRules.cpp
+        LexicalRules.h
+        Input.cpp
+        Input.h
+        DFAMinimization.h
+        DFAMinimization.cpp)
