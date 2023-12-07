@@ -172,7 +172,7 @@ pair<Node, Node> NFA::singleNodeNfa(const string &string1) {
         return {s, e};
     } else {
         bool escapeMood = false;
-        bool isKleendeClosure = false;
+        bool isKleeneClosure = false;
         Node lastBeforeNode, prevNode;
         Node s = *new Node({*new State(false, 0, generateNewStateName())});
         TRANSITIONS sTransitions, bTransitions;
@@ -193,7 +193,7 @@ pair<Node, Node> NFA::singleNodeNfa(const string &string1) {
         int i = 1;
         while (i < string1.size() - 1) {
             if (string1[i] == '*' && !escapeMood) {
-                isKleendeClosure = true;
+                isKleeneClosure = true;
                 nfa[prevNode].insert({EPSILON, lastBeforeNode});
                 i++;
             } else if (string1[i] == '+' && !escapeMood) {
@@ -210,9 +210,9 @@ pair<Node, Node> NFA::singleNodeNfa(const string &string1) {
                 transitionString = convertToString(string1[i]);
                 transitionSet.insert(transitionString);
                 nfa[prevNode].insert({transitionString, newNode});
-                if (isKleendeClosure) {
+                if (isKleeneClosure) {
                     nfa[lastBeforeNode].insert({transitionString, newNode});
-                    isKleendeClosure = false;
+                    isKleeneClosure = false;
                 }
                 lastBeforeNode = prevNode;
                 prevNode = newNode;
@@ -223,9 +223,12 @@ pair<Node, Node> NFA::singleNodeNfa(const string &string1) {
         if (string1.size() > 1) {
             Node newNode = *new Node({*new State(false, 0, generateNewStateName())});
             nfa[prevNode].insert({convertToString(string1[string1.size() - 1]), newNode});
-            if (isKleendeClosure) {
+            transitionSet.insert(convertToString(string1[string1.size() - 1]));
+
+            if (isKleeneClosure) {
                 nfa[lastBeforeNode].insert({convertToString(string1[string1.size() - 1]), newNode});
-                isKleendeClosure = false;
+                transitionSet.insert(convertToString(string1[string1.size() - 1]));
+                isKleeneClosure = false;
             }
             TRANSITIONS nTransitions;
             nfa.insert({newNode, nTransitions});
@@ -271,7 +274,7 @@ pair<Node, Node> NFA::parseAND(const string &s) {
     vector<string> parsed = customSplit(s, ' ');
     vector<pair<Node, Node>> ns = *new vector<pair<Node, Node>>;
     for (auto i: parsed) {
-        if (i == " ")continue;
+        if (i == " " || i == "")continue;
         int rd = checkIfRD(i, lexicalRules);
         if (isRange(i)) ns.push_back(range(i));
         else if (rd != 0) {
