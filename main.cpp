@@ -33,12 +33,16 @@ void printTransitionTable(TRANSITION_TABLE transtionTable) {
 
 
 int main() {
-    Input input = *new Input("/home/aliaa/input");
+    Input input = *new Input("D:\\C\\Compiler\\input");
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     printTransitionTable(nfa.nfa);
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
     std::vector<string> transitions(nfa.transitionSet.begin(), nfa.transitionSet.end());
-    pair<DFA_TRANSITION_TABLE, Node> res = nfatodfa.nfaToDfa(nfa.root, {transitions});
-    nfatodfa.printTransitionTable(res.first);
+    DfaResult res = nfatodfa.nfaToDfa(nfa.root, {transitions});
+    nfatodfa.printTransitionTable(res.DFA);
+    for (auto p : res.endMap) {
+        cout << p.first.states.begin()->name << " " << p.second << endl;
+    }
+    cout << res.DFA.size();
 
 }
