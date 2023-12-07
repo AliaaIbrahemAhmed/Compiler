@@ -107,16 +107,16 @@ DfaResult NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
 				//add new node to a table if transistions are found
 			}
 			if (!statesEClosure.empty()) {
-				Node toNode = Node(statesEClosure);
-				DFA[curNode][input] = toNode;
-				/*
+				//Node toNode = Node(statesEClosure);
+				//DFA[curNode][input] = toNode;
+				
 				
 				Node toNode =  Node(statesEClosure);
 				Node reperesentingToNode = getRepresentingNode(toNode, count, nameMap, endingMap);
 				Node reperesentingFromNode = getRepresentingNode(curNode, count, nameMap, endingMap);
 				DFA[reperesentingFromNode][input] = reperesentingToNode;
 				//cout << nameMap[curNode] << "->" << nameMap[toNode] << endl;
-				*/
+
 
 				// add node to unprocessed states if not visited
 			
