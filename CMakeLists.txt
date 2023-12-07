@@ -11,4 +11,4 @@ add_executable(Compiler
         State.cpp
         State.h main.cpp
         NFATODFA.h
-        NFATODFA.cpp DFAMinimization.cpp DFAMinimization.h)
+        NFATODFA.cpp)

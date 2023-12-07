@@ -19,6 +19,7 @@ bool Node::operator==(const Node& other) const {
 
 void Node::addState(State state) {
 this->states.insert(state);
+
 }
 
 Node::Node(const set<State> &states) : states(states) {

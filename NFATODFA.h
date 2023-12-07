@@ -15,20 +15,29 @@ using NFA_TRANSITION_TABLE = unordered_map<Node, NFA_TRANSITIONS>;
 using DFA_TRANSITION_TABLE = unordered_map<Node, DFA_TRANSITIONS>;
 
 
-#define EPSILON "\L"
+#define EPSILON "\\L"
 
 class NFATODFA {
 
 private:
 	NFA_TRANSITION_TABLE transitionTable;
-	Node getRepresentingNode(Node node);
+	Node getRepresentingNode(Node& node, int& count, unordered_map<Node, string>& nameMap, unordered_map<Node, string>& endMap);
 
 
 public:
-	pair<DFA_TRANSITION_TABLE, Node> nfaToDfa(Node startNode, vector<string>& inputs);
+	struct DfaResult nfaToDfa(Node startNode, vector<string>& inputs);
 	explicit NFATODFA(const NFA_TRANSITION_TABLE& transtionTable);
 	void printTransitionTable(const DFA_TRANSITION_TABLE& transtionTable);
 	Node eClosure(Node& node);
+
+	
+
+};
+
+struct DfaResult {
+	DFA_TRANSITION_TABLE DFA;
+	Node startNode;
+	unordered_map<Node, string> endMap;
 
 };
 
