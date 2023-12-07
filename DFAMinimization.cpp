@@ -138,6 +138,7 @@ mappingTransitions(const vector<unordered_set<Node>> &groups, const DfaResult df
         DFA_TRANSITIONS transitions;
         dfa.find(repState);
         if (dfa.find(repState) != dfa.end()) {
+            transitions = dfa.at(repState);
             for (const auto &tran: transitions) {
                 DFA_TRANSITIONS temp;
                 if (repState.states.begin()->isEndState) {

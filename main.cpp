@@ -44,7 +44,7 @@ int main() {
     DfaResult minimizedRes = DFAminimization.minimization(res);
 
     nfatodfa.printTransitionTable(res.DFA);
-    cout<<"minimized transition table"<<"\n";
+    cout<<"minimized transition table with size("<<minimizedRes.DFA.size()<<")"<<"\n";
     nfatodfa.printTransitionTable(minimizedRes.DFA);
     for (auto p : minimizedRes.endMap) {
         cout << p.first.states.begin()->name << " " << p.second << endl;
