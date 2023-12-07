@@ -37,8 +37,6 @@ Node NFATODFA::eClosure(Node& node)
 
 Node NFATODFA::getRepresentingNode(Node& node, int& count, unordered_map<Node, string>& nameMap, unordered_map<Node, string>& endingMap)
 {
-	if (node.states.empty())
-		return *new Node({ *new State(true, 0, "PHI" )});
 	State endingState;
 	endingState.priority = -1;
 	bool isEndNode = false;
@@ -108,7 +106,7 @@ DfaResult NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
 				}
 				//add new node to a table if transistions are found
 			}
-			
+			if (!statesEClosure.empty()) {
 				//Node toNode = Node(statesEClosure);
 				//DFA[curNode][input] = toNode;
 				
@@ -126,7 +124,7 @@ DfaResult NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
 				//	cout << "new state " << nameMap[toNode] << endl;
 					unprocessedStates.push(toNode);
 				}
-			
+			}
 		}
 	}
 	DfaResult res;
