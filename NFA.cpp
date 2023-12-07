@@ -236,6 +236,7 @@ pair<Node, Node> NFA::parseAND(const string &s) {
     vector<string> parsed = customSplit(s, ' ');
     vector<pair<Node, Node>> ns = *new vector<pair<Node, Node>>;
     for (auto i: parsed) {
+        if (i == " ")continue;
         int rd = checkIfRD(i, lexicalRules);
         if (isRange(i)) ns.push_back(range(i));
         else if (rd != 0) {
@@ -254,12 +255,22 @@ pair<Node, Node> NFA::parseAND(const string &s) {
                 res = parseOr(lexicalRules.regularDefinitions[i]);
                 ns.push_back(res);
             }
-        } else if (i.size() > 1 && i.at(i.size() - 1) == '+') {
-            ns.push_back(positiveClosure(singleNodeNfa(i.substr(0, i.size() - 1))));
-        } else if (i.size() > 1 && i.at(i.size() - 1) == '*') {
-            ns.push_back(kleeneClosure(singleNodeNfa(i.substr(0, i.size() - 1))));
+        } else if (i.size() > 1 && i.at(i.size() - 1) == '+' &&
+                   !(i.size() >= 2 && i.at(i.size() - 1) == '+' && i.at(i.size() - 2) == '\\')) {
+            string sliced = i.substr(0, i.size() - 1);
+            sliced.erase(std::remove(sliced.begin(), sliced.end(), '\\'), sliced.end());
+            ns.push_back(positiveClosure(singleNodeNfa(sliced)));
+        } else if (i.size() > 1 && i.at(i.size() - 1) == '*' &&
+                   !(i.size() >= 2 && i.at(i.size() - 1) == '*' && i.at(i.size() - 2) == '\\')) {
+            string sliced = i.substr(0, i.size() - 1);
+            sliced.erase(std::remove(sliced.begin(), sliced.end(), '\\'), sliced.end());
+            ns.push_back(kleeneClosure(singleNodeNfa(sliced)));
         } else if (!i.empty()) {
-            ns.push_back(singleNodeNfa(i));
+            if (i == EPSILON) ns.push_back(singleNodeNfa(EPSILON));
+            else {
+                i.erase(std::remove(i.begin(), i.end(), '\\'), i.end());
+                ns.push_back(singleNodeNfa(i));
+            }
         }
     }
     if (ns.size() == 1) return ns[0];
@@ -337,6 +348,8 @@ pair<Node, Node> NFA::parse(string rule) {
     while (i < rule.size()) {
         char c = rule[i];
         if (c == '\\' && !escapeMood) {
+            if (!s.empty())s.top().push_back('\\');
+            else s.emplace("\\");
             i++;
             escapeMood = true;
             continue;
@@ -374,11 +387,6 @@ pair<Node, Node> NFA::parse(string rule) {
                     nodes.push(lastRes);
                 }
             }
-        } else if (escapeMood && c == 'L') {
-            string temp = s.top();
-            temp.append(EPSILON);
-            s.pop();
-            s.push(temp);
         } else {
             if (s.empty() || s.top() == "(" && !escapeMood) {
                 s.emplace("");
