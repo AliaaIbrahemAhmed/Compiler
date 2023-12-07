@@ -67,7 +67,7 @@ public:
 
     pair<Node, Node> eatForward(const pair<Node, Node> &first, string last, bool isEndState, int priority);*/
 
-    vector<pair<Node, Node>> parseRDs();
+   // vector<pair<Node, Node>> parseRDs();
 
     vector<pair<Node, Node>> parseREs();
 
