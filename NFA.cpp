@@ -15,9 +15,9 @@ NFA::NFA(LexicalRules &lexicalRules, Node root) : root(std::move(root)) {
     this->lexicalRules = lexicalRules;
     this->count = 1;
     vector<pair<Node, Node>> nodes, n1, n2, n3, n4;
-
+/*
     n1 = parseRDs();
-    nodes.insert(nodes.end(), n1.begin(), n1.end());
+    nodes.insert(nodes.end(), n1.begin(), n1.end());*/
     n2 = generateKWsNFA();
     nodes.insert(nodes.end(), n2.begin(), n2.end());
 
@@ -171,31 +171,66 @@ pair<Node, Node> NFA::singleNodeNfa(const string &string1) {
         nfa.insert({e, eTransitions});
         return {s, e};
     } else {
+        bool escapeMood = false;
+        bool isKleendeClosure = false;
+        Node lastBeforeNode, prevNode;
         Node s = *new Node({*new State(false, 0, generateNewStateName())});
         TRANSITIONS sTransitions, bTransitions;
-        Node b = *new Node({*new State(false, 0, generateNewStateName())});
-        string transitionString = convertToString(string1[0]);
-        transitionSet.insert(transitionString);
-        sTransitions.insert({transitionString, b});
-        nfa.insert({b, bTransitions});
-        Node prevNode = b;
-        for (int i = 1; i < string1.size() - 1; i++) {
-            Node newNode = *new Node({*new State(false, 0, generateNewStateName())});
-            TRANSITIONS nTransitions;
-            nfa.insert({newNode, nTransitions});
-            transitionString = convertToString(string1[i]);
+        string transitionString;
+        nfa.insert({s, sTransitions});
+        if (string1[0] == '\\') {
+            escapeMood = true;
+            prevNode = s;
+        } else {
+            Node b = *new Node({*new State(false, 0, generateNewStateName())});
+            transitionString = convertToString(string1[0]);
             transitionSet.insert(transitionString);
-            nfa[prevNode].insert({transitionString, newNode});
-            prevNode = newNode;
+            nfa[s].insert({transitionString, b});
+            nfa.insert({b, bTransitions});
+            prevNode = b;
+            lastBeforeNode = s;
+        }
+        int i = 1;
+        while (i < string1.size() - 1) {
+            if (string1[i] == '*' && !escapeMood) {
+                isKleendeClosure = true;
+                nfa[prevNode].insert({EPSILON, lastBeforeNode});
+                i++;
+            } else if (string1[i] == '+' && !escapeMood) {
+                nfa[prevNode].insert({EPSILON, lastBeforeNode});
+                i++;
+            } else if (string1[i] == '\\') {
+                escapeMood = true;
+                i++;
+                continue;
+            } else {
+                Node newNode = *new Node({*new State(false, 0, generateNewStateName())});
+                TRANSITIONS nTransitions;
+                nfa.insert({newNode, nTransitions});
+                transitionString = convertToString(string1[i]);
+                transitionSet.insert(transitionString);
+                nfa[prevNode].insert({transitionString, newNode});
+                if (isKleendeClosure) {
+                    nfa[lastBeforeNode].insert({transitionString, newNode});
+                    isKleendeClosure = false;
+                }
+                lastBeforeNode = prevNode;
+                prevNode = newNode;
+                escapeMood = false;
+            }
+            i++;
         }
         if (string1.size() > 1) {
             Node newNode = *new Node({*new State(false, 0, generateNewStateName())});
             nfa[prevNode].insert({convertToString(string1[string1.size() - 1]), newNode});
+            if (isKleendeClosure) {
+                nfa[lastBeforeNode].insert({convertToString(string1[string1.size() - 1]), newNode});
+                isKleendeClosure = false;
+            }
             TRANSITIONS nTransitions;
             nfa.insert({newNode, nTransitions});
             prevNode = newNode;
         }
-        nfa.insert({s, sTransitions});
         return {s, prevNode};
     }
 }
@@ -258,17 +293,17 @@ pair<Node, Node> NFA::parseAND(const string &s) {
         } else if (i.size() > 1 && i.at(i.size() - 1) == '+' &&
                    !(i.size() >= 2 && i.at(i.size() - 1) == '+' && i.at(i.size() - 2) == '\\')) {
             string sliced = i.substr(0, i.size() - 1);
-            sliced.erase(std::remove(sliced.begin(), sliced.end(), '\\'), sliced.end());
+            //    sliced.erase(std::remove(sliced.begin(), sliced.end(), '\\'), sliced.end());
             ns.push_back(positiveClosure(singleNodeNfa(sliced)));
         } else if (i.size() > 1 && i.at(i.size() - 1) == '*' &&
                    !(i.size() >= 2 && i.at(i.size() - 1) == '*' && i.at(i.size() - 2) == '\\')) {
             string sliced = i.substr(0, i.size() - 1);
-            sliced.erase(std::remove(sliced.begin(), sliced.end(), '\\'), sliced.end());
+            //    sliced.erase(std::remove(sliced.begin(), sliced.end(), '\\'), sliced.end());
             ns.push_back(kleeneClosure(singleNodeNfa(sliced)));
         } else if (!i.empty()) {
             if (i == EPSILON) ns.push_back(singleNodeNfa(EPSILON));
             else {
-                i.erase(std::remove(i.begin(), i.end(), '\\'), i.end());
+                //        i.erase(std::remove(i.begin(), i.end(), '\\'), i.end());
                 ns.push_back(singleNodeNfa(i));
             }
         }
@@ -430,6 +465,7 @@ vector<pair<Node, Node>> NFA::parseREs() {
     }
     return pairs;
 }
+/*
 
 vector<pair<Node, Node>> NFA::parseRDs() {
     vector<pair<Node, Node>> pairs;
@@ -437,14 +473,16 @@ vector<pair<Node, Node>> NFA::parseRDs() {
         string lhs = lexicalRules.rdOrder.top();
         string rhs = lexicalRules.regularDefinitions[lhs];
         pair<Node, Node> p = parse(rhs);
-        Node last = *new Node({*new State(true, 1, lhs)});
+        Node last = *new Node({*new State(true, -1, lhs)});
         TRANSITIONS t;
-        nfa.insert({last, t});
-        nfa[p.second].insert({EPSILON, last});
+        */
+/*nfa.insert({last, t});
+        nfa[p.second].insert({EPSILON, last});*//*
+
         pair<Node, Node> pairToInsert = *new pair<Node, Node>{p.first, last};
         pairs.push_back(pairToInsert);
         regularDefinitionsNFA.insert({lhs, pairToInsert});
         this->lexicalRules.rdOrder.pop();
     }
     return pairs;
-}
+}*/
