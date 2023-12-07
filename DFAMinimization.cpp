@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <queue>
 #include <algorithm>
+#include <limits>
 
 #include "DFAMinimization.h"
 
@@ -41,7 +42,11 @@ Node move(const Node &currentNode, const string &a, const DFA_TRANSITION_TABLE &
     Node nextStates;
     DFA_TRANSITIONS transitions = getTransitionsOfCurrentNode(currentNode, dfa);
     for (const auto &t: transitions) {
-        if (t.first == a) {
+        if (a == "," ){
+            cout<<"input for move: "<<t.first<<" "<<a<<endl;
+            cout<<"ddd: "<<(t.first == a)<<endl;}
+            if (t.first == a) {
+           // cout<<"input for move: "<<t.first<<endl;
             nextStates.addState(*t.second.states.begin());
         }
     }
@@ -58,9 +63,8 @@ set<State> getStates(const unordered_set<Node> &groups) {
 }
 
 /*This function responsible for return whether the states ar going to the partitions or not*/
-bool /*DFAMinimization::*/
-goToSameGroup(vector<unordered_set<Node>> &groups, const Node &a, const Node &b, const string &s,
-              const DFA_TRANSITION_TABLE &dfa) {
+bool goToSameGroup(vector<unordered_set<Node>> &groups, const Node &a, const Node &b, const string &s,
+                   const DFA_TRANSITION_TABLE &dfa) {
     Node nextA = move(a, s, dfa);
     Node nextB = move(b, s, dfa);
     if (nextA.states.empty() && nextB.states.empty()) {
@@ -91,17 +95,18 @@ refinePartition(vector<unordered_set<Node>> &groups, const string &x, const DFA_
         for (const Node &s: T) {
             markedStates[s] = false;
         }
-        for (const auto &it: T) {
-            if (markedStates[it]) continue;
+        vector<Node> nodes(T.begin(), T.end());  // Convert unordered_set to vector for indexing
+        for (size_t it = 0; it < nodes.size(); ++it) {
+            if (markedStates[nodes[it]]) continue;
             unordered_set<Node> subgroup;
-            subgroup.insert(it);
-            markedStates[it] = true;
+            subgroup.insert(nodes[it]);
+            markedStates[nodes[it]] = true;
             /*this part is wrong as iterator jt has to have element after it 3la tool*/
-            for (const auto &jt: T) {
-                if (markedStates[jt]) continue;
-                if (goToSameGroup(groups, it, jt, x, dfa)) {
-                    subgroup.insert(jt);
-                    markedStates[jt] = true;
+            for (size_t jt = it+1; jt < nodes.size(); ++jt) {
+                if (markedStates[nodes[jt]]) continue;
+                if (goToSameGroup(groups, nodes[it], nodes[jt], x, dfa)) {
+                    subgroup.insert(nodes[jt]);
+                    markedStates[nodes[jt]] = true;
                 }
             }
             newGroups.push_back(subgroup);
@@ -110,18 +115,33 @@ refinePartition(vector<unordered_set<Node>> &groups, const string &x, const DFA_
     return newGroups;
 }
 
-DFA_TRANSITION_TABLE mappingTransitions(const vector<unordered_set<Node>> &groups, const DFA_TRANSITION_TABLE &dfa,
-                                        unordered_map<Node, string> &endingMap) {
+Node getRepresentativeNode(const unordered_set<Node> &T) {
+    Node repState;
+    //if (!T.begin()->states.begin()->isEndState)
+         repState = *T.begin();
+   // else {
+     //   int maxPriority = numeric_limits<int>::min(); // Initialize with minimum value
+       // for (const Node &node: T) {
+         //   for (const State &state: node.states) {
+           //     if (state.priority > maxPriority) {
+             //       maxPriority = state.priority;
+               //      repState = node; // Update repState with the node having max priority state
+                //}
+           // }
+        //}
+    //}
+    return repState;
+}
+
+// return the newStart Node and the Final transition table
+DfaResult
+mappingTransitions(const vector<unordered_set<Node>> &groups, const DFA_TRANSITION_TABLE &dfa,
+                   unordered_map<Node, string> &endingMap, const Node &startNode) {
     unordered_map<Node, Node> representativeStates;
     unordered_map<Node, string> finalEndMap;
     for (const auto &T: groups) {
         //Renaming for the states will be the first element in the partition
-        Node repState;
-        if(!repState.states.begin()->isEndState)
-            repState = *T.begin();
-        else {
-
-        }
+        Node repState = *T.begin();
         representativeStates[repState] = repState;
         for (auto it = next(T.begin(), 1); it != T.end(); ++it) {
             representativeStates[*it] = repState;
@@ -130,13 +150,13 @@ DFA_TRANSITION_TABLE mappingTransitions(const vector<unordered_set<Node>> &group
 
     DFA_TRANSITION_TABLE finalTransitions;
     for (const auto &T: groups) {
-        Node repState = representativeStates[*T.begin()];
+        Node repState = representativeStates[getRepresentativeNode(T)];
         DFA_TRANSITIONS transitions = dfa.at(repState);
         for (const auto &tran: transitions) {
             DFA_TRANSITIONS temp;
             if (repState.states.begin()->isEndState) {
                 finalEndMap[repState] = endingMap[repState];
-                cout<<"final ending state";
+                //cout << "final ending state "<<finalEndMap[repState]<<"\n"<< "final ending state "<<endingMap[repState]<<"\n";
             }
             temp[tran.first] = representativeStates[tran.second];
             // Insert temp transition into finalTransitions for repState without overwriting existing entries
@@ -144,7 +164,13 @@ DFA_TRANSITION_TABLE mappingTransitions(const vector<unordered_set<Node>> &group
         }
 
     }
-    return finalTransitions;
+    DfaResult finalMapping;
+    finalMapping.DFA = finalTransitions;
+    finalMapping.startNode = representativeStates[startNode];
+    finalMapping.endMap=endingMap;
+    //pair<DFA_TRANSITION_TABLE, Node> res = make_pair(finalTransitions, representativeStates[startNode]);
+    //endingMap = finalTransitions;
+    return finalMapping;
 }
 
 // Function to mark reachable states from the initial state (DFS traversal)
@@ -192,9 +218,9 @@ DFA_TRANSITION_TABLE removeDeadStates(DFA_TRANSITION_TABLE &dfaTransitions, cons
     return dfaTransitions;
 }
 
-DFA_TRANSITION_TABLE DFAMinimization::minimization(DfaResult transitonMap) {
+DfaResult DFAMinimization::minimization(const DfaResult& transitonMap) {
     DFA_TRANSITION_TABLE dfa = transitonMap.DFA;
-    unordered_map<Node, string> endMap =transitonMap.endMap;
+    unordered_map<Node, string> endMap = transitonMap.endMap;
     Node startNode = transitonMap.startNode;
     vector<unordered_set<Node>> groups;
     unordered_map<string, unordered_set<Node>> subgroups;
@@ -209,24 +235,27 @@ DFA_TRANSITION_TABLE DFAMinimization::minimization(DfaResult transitonMap) {
         }
     }
     // Print the contents of the subgroups map
-    for (const auto &subgroup: subgroups) {
+    /**for (const auto &subgroup: subgroups) {
         std::cout << "Subgroup: " << subgroup.first << std::endl;
         std::cout << "States: ";
         for (const auto &node: subgroup.second) {
             std::cout << node.states.begin()->name << " ";
         }
         std::cout << std::endl;
-    }
+    }**/
 
     for (const auto &entry: subgroups) {
         groups.push_back(entry.second);
     }
     bool changed = true;
     set<string> inputSymbols = getInputs(dfa);
+//for(auto x: inputSymbols) cout<<"input:" <<  x<<"\n";
+    //cout<<"inputsize:" << inputSymbols.size()<<"\n";
     // Node nextState = move(startNode,*inputSymbols.begin(),dfa);
     while (changed) {
         vector<unordered_set<Node>> newGroups(groups.begin(), groups.end());
         for (const string &x: inputSymbols) {
+            //cout<<"inputentered:" << x<<"\n";
             newGroups = refinePartition(newGroups, x, dfa);
         }
         if (newGroups == groups) {
@@ -234,8 +263,22 @@ DFA_TRANSITION_TABLE DFAMinimization::minimization(DfaResult transitonMap) {
         }
         groups = newGroups;
     }
-    DFA_TRANSITION_TABLE temp = mappingTransitions(groups, dfa, endMap);
-    DFA_TRANSITION_TABLE finalDfaTable = removeDeadStates(temp, startNode);
+    std::cout << "size1: " << groups.size() << std::endl;
+    DfaResult finalRes = mappingTransitions(groups, dfa, endMap, startNode);
+    DFA_TRANSITION_TABLE temp = finalRes.DFA;
+    std::cout << "size1: " << finalRes.DFA.size() << std::endl;
+    // have to change to DFA result yet
+    finalRes.DFA = removeDeadStates(temp, startNode);
+    std::cout << "size12: " << finalRes.DFA.size() << std::endl;
 
-    return finalDfaTable;
+    // Print the contents of the subgroups map
+    /**for (const auto &subgroup: subgroups) {
+        std::cout << "Subgroup: " << subgroup.first << std::endl;
+        std::cout << "States: ";
+        for (const auto &node: subgroup.second) {
+            std::cout << node.states.begin()->name << " ";
+        }
+        std::cout << std::endl;
+    }**/
+    return finalRes;
 }

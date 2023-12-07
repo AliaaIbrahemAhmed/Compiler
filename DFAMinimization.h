@@ -15,17 +15,15 @@
 #define COMPILER_DFAMINIMIZATION_H
 using namespace std;
 
-using DFA_TRANSITION_TABLE = unordered_map<Node, DFA_TRANSITIONS>;
-using DFA_TRANSITIONS = unordered_map<string, Node>;
+
 #define EPSILON "\L"
 
 class DFAMinimization {
-
 private:
     DFA_TRANSITION_TABLE  transitionTable;
 
 public:
-    DFA_TRANSITION_TABLE  minimization(const DfaResult transitonMap);
+    DfaResult minimization(const DfaResult& transitonMap);
     /* goToSameGroup(set<set<Node>> &groups, Node a ,Node b, string s, const DFA_TRANSITION_TABLE& dfa);*/
 
 };
