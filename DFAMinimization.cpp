@@ -151,8 +151,7 @@ mappingTransitions(const vector<unordered_set<Node>> &groups, const DfaResult df
                 // Insert temp transition into finalTransitions for repState without overwriting existing entries
                 finalTransitions[repState].insert(temp.begin(), temp.end());
             }
-        }
-        else{
+        } else {
             if (repState.states.begin()->isEndState) {
                 finalEndMap[repState] = endingMap[repState];
                 //cout << "final ending state "<<finalEndMap[repState]<<"\n"<< "final ending state "<<endingMap[repState]<<"\n";
@@ -299,7 +298,7 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
             std::cout << node.states.begin()->name << std::endl;
         }
     }
-
+    DFAMinimization::sizeMinimized = groups.size();
     std::cout << "size of final minimized group: " << groups.size() << std::endl;
     DfaResult finalRes = mappingTransitions(groups, transitionMap);
     DFA_TRANSITION_TABLE temp = finalRes.DFA;
@@ -308,20 +307,20 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
     return finalRes;
 }
 
-void DFAMinimization::writeFile(const string &filePath, const DfaResult& dfaFinal) {
+void DFAMinimization::writeFile(const string &filePath, const DfaResult &dfaFinal) {
     string fileName = filePath + "\\finalMinimizedTable.txt";
     ofstream outputFile(fileName, std::ios::out);
     // Open the file for writing
     DFA_TRANSITION_TABLE dfa = dfaFinal.DFA;
-    outputFile << "Transition Table with States( "<<DFAMinimization::sizeMinimized<<" )"<<endl;
-    for (auto & it : dfa) {
+    outputFile << "Transition Table with States( " << DFAMinimization::sizeMinimized << " )" << endl;
+    for (auto &it: dfa) {
         for (auto it1 = it.second.begin(); it1 != it.second.end(); ++it1) {
             outputFile << "    ";
-            for (const State& state : it.first.states) {
+            for (const State &state: it.first.states) {
                 outputFile << state.name << " ";
             }
             outputFile << "on Symbol: " << it1->first << " -> { ";
-            for (const State& nextState : it1->second.states) {
+            for (const State &nextState: it1->second.states) {
                 outputFile << nextState.name << " " << nextState.isEndState;
             }
             outputFile << "}\n";
