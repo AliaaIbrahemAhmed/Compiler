@@ -10,8 +10,10 @@
 #include <unordered_set>
 #include <queue>
 #include <algorithm>
+#include <fstream>
 #include "DFAMinimization.h"
 
+int DFAMinimization::sizeMinimized = 0; // Definition and initialization
 
 set<string> getInputs(const DFA_TRANSITION_TABLE &dfa) {
     // Iterate over all input symbols available in the DFA transitions
