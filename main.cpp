@@ -14,6 +14,19 @@
 
 using namespace std;
 
+
+string takeInputString(string wordToUser) {
+    std::string inputString;
+    wordToUser += "\n";
+    wordToUser = "\n" + wordToUser;
+
+    // Using >> to get a single-word string
+    std::cout << wordToUser;
+    std::cin >> inputString;
+
+    return inputString;
+}
+
 void printTransitionTable(TRANSITION_TABLE transtionTable) {
     std::cout << "\nNFA Transition Table:\n";
     for (auto &it: transtionTable) {
@@ -37,32 +50,31 @@ void printTransitionTable(TRANSITION_TABLE transtionTable) {
 
 
 int main() {
-    Input input = *new Input("D:\\Com\\input");
+    Input input = *new Input(takeInputString("Please Enter the lexical rules path"));
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     printTransitionTable(nfa.nfa);
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
     DFAMinimization DFAminimization;
     std::vector<string> transitions(nfa.transitionSet.begin(), nfa.transitionSet.end());
     DfaResult res = nfatodfa.nfaToDfa(nfa.root, {transitions});
-    cout<<"transition table with size("<<res.DFA.size()<<")"<<res.endMap.size()<<"\n";
+    cout << "transition table with size(" << res.DFA.size() << ")" << res.endMap.size() << "\n";
     DfaResult minimizedRes = DFAminimization.minimization(res);
 
     nfatodfa.printTransitionTable(res.DFA);
-    cout<<"minimized transition table with size("<<minimizedRes.DFA.size()<<")"<<"\n";
+    cout << "minimized transition table with size(" << minimizedRes.DFA.size() << ")" << "\n";
     nfatodfa.printTransitionTable(minimizedRes.DFA);
     cout << res.DFA.size();
     // Get file path input from the user
-    std::string filePath;
-    cout << "Enter the file path where you want to create the file: ";
-    getline(std::cin, filePath);
+    std::string filePath = takeInputString("Please Enter the desired path for the minimized table");
     DFAminimization.writeFile(filePath, minimizedRes);
-    for (auto p : minimizedRes.endMap) {
+    for (auto p: minimizedRes.endMap) {
         cout << p.first.states.begin()->name << " " << p.second << endl;
     }
     cout << res.DFA.size();
-    Matcher matcher=*new Matcher();
-    matcher.set_output_file_name("D:\\Com\\output.txt");
-    std::ifstream inputFile("D:\\Com\\test.txt");
+    Matcher matcher = *new Matcher();
+    matcher.set_output_file_name("output.txt");
+
+    std::ifstream inputFile(takeInputString("Please Enter the test path"));
     if (!inputFile.is_open()) {
         std::cerr << "Error opening input file" << std::endl;
         return 1;
@@ -84,7 +96,7 @@ int main() {
     matcher.match(tokens, minimizedRes);
     set<string> symbol_table = matcher.get_symbol_table();
     cout << "Symbol Table:" << endl;
-    for (const string& symbol : symbol_table) {
+    for (const string &symbol: symbol_table) {
         cout << symbol << endl;
     }
 
