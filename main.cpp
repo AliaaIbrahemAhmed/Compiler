@@ -10,6 +10,7 @@
 #include "Matcher.h"
 #include <sstream>
 
+#include "DFAMinimization.h"
 
 using namespace std;
 
@@ -40,10 +41,16 @@ int main() {
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     printTransitionTable(nfa.nfa);
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
+    DFAMinimization DFAminimization;
     std::vector<string> transitions(nfa.transitionSet.begin(), nfa.transitionSet.end());
     DfaResult res = nfatodfa.nfaToDfa(nfa.root, {transitions});
+    cout<<"transition table with size("<<res.DFA.size()<<")"<<res.endMap.size()<<"\n";
+    DfaResult minimizedRes = DFAminimization.minimization(res);
+
     nfatodfa.printTransitionTable(res.DFA);
-    for (auto p : res.endMap) {
+    cout<<"minimized transition table with size("<<minimizedRes.DFA.size()<<")"<<"\n";
+    nfatodfa.printTransitionTable(minimizedRes.DFA);
+    for (auto p : minimizedRes.endMap) {
         cout << p.first.states.begin()->name << " " << p.second << endl;
     }
     cout << res.DFA.size();
@@ -68,8 +75,8 @@ int main() {
 
     // Close the input file
     inputFile.close();
-    matcher.match(tokens, res);
-    set<string> symbol_table = matcher.get_sym_table();
+    matcher.match(tokens, minimizedRes);
+    set<string> symbol_table = matcher.get_symbol_table();
     cout << "Symbol Table:" << endl;
     for (const string& symbol : symbol_table) {
         cout << symbol << endl;

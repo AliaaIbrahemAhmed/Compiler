@@ -23,9 +23,9 @@ public:
     Matcher();
     virtual ~Matcher();
 
-    set<string> get_sym_table();
+    set<string> get_symbol_table();
 
-    void match(vector<string> token,DfaResult DFA);
+    void match(vector<string> token,DfaResult minimized_DFA);
 
     void set_output_file_name(string output_file_name);
 
@@ -35,13 +35,13 @@ private:
 
     set<string> symbol_table;
     string output_file_name;
-    string out;
+    string output;
 
-    void write_output_file(string name);
+    void write_to_output_file(string name);
 
-    bool panic_mode_recovery(string str, DfaResult DFA);
+    bool panic_mode_recovery(string str, DfaResult minimized_DFA);
 
-    bool matchToken(string str, DfaResult DFA);
+    bool matchToken(string str, DfaResult minimized_DFA);
 
 };
 

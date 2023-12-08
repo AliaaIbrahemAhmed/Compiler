@@ -30,4 +30,3 @@ void Node::addState(State state) {
 Node::Node(set<State> states) : states(states) {
     this->states = states;
 }
-
