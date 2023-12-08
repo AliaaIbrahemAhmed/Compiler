@@ -23,7 +23,9 @@ private:
     DFA_TRANSITION_TABLE  transitionTable;
 
 public:
+    static int sizeMinimized; // Static member variable of the class
     DfaResult minimization(const DfaResult& transitonMap);
+    void writeFile(const string& filePath, const DfaResult& dfaFinal);
     /* goToSameGroup(set<set<Node>> &groups, Node a ,Node b, string s, const DFA_TRANSITION_TABLE& dfa);*/
 
 };
