@@ -290,12 +290,10 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
         }
         groups = newGroups;
     }
-    int emptyyy = 0;
     for (const auto &group: groups) {
         std::cout << "Group:" << std::endl;
         for (const auto &node: group) {
             // Assuming each Node has a method 'getName()' to get its name
-            if (group.empty()) emptyyy++;
             std::cout << node.states.begin()->name << std::endl;
         }
     }
@@ -306,4 +304,25 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
     // have to change to DFA result yet
     finalRes.DFA = removeDeadStates(temp, startNode);
     return finalRes;
+}
+
+void DFAMinimization::writeFile(const string &filePath, const DfaResult& dfaFinal) {
+    string fileName = filePath + "\\finalMinimizedTable.txt";
+    ofstream outputFile(fileName, std::ios::out);
+    // Open the file for writing
+    DFA_TRANSITION_TABLE dfa = dfaFinal.DFA;
+    outputFile << "Transition Table with States( "<<DFAMinimization::sizeMinimized<<" )"<<endl;
+    for (auto & it : dfa) {
+        for (auto it1 = it.second.begin(); it1 != it.second.end(); ++it1) {
+            outputFile << "    ";
+            for (const State& state : it.first.states) {
+                outputFile << state.name << " ";
+            }
+            outputFile << "on Symbol: " << it1->first << " -> { ";
+            for (const State& nextState : it1->second.states) {
+                outputFile << nextState.name << " " << nextState.isEndState;
+            }
+            outputFile << "}\n";
+        }
+    }
 }

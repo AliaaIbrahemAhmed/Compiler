@@ -50,6 +50,12 @@ int main() {
     nfatodfa.printTransitionTable(res.DFA);
     cout<<"minimized transition table with size("<<minimizedRes.DFA.size()<<")"<<"\n";
     nfatodfa.printTransitionTable(minimizedRes.DFA);
+    cout << res.DFA.size();
+    // Get file path input from the user
+    std::string filePath;
+    cout << "Enter the file path where you want to create the file: ";
+    getline(std::cin, filePath);
+    DFAminimization.writeFile(filePath, minimizedRes);
     for (auto p : minimizedRes.endMap) {
         cout << p.first.states.begin()->name << " " << p.second << endl;
     }
