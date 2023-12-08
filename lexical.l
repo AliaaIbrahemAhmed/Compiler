@@ -24,8 +24,8 @@ if|else|while			printf("%s\n",yytext);
 [;,\(\)\{\}]			printf("%s\n",yytext);
 {addop}		printf("addop\n");
 {mulop}		printf("mulop\n");
-[\n \t]		;
-.			printf("Unregcccodnized character %s\n", yytext);
+[\r]?[\n \t]		;
+.			printf("invalid symbol %s\n", yytext);
 
 %%
 
