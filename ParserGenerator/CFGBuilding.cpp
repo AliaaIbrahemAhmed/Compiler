@@ -5,17 +5,16 @@
 #include <iostream>
 #include <algorithm>
 #include "CFGBuilding.h"
-#include "Terminal.h"
 #include "utilities.h"
 
-void
-CFGBuilding::CFGBuilder(const string &path, const vector<string> &tokens) {
+void CFGBuilding::CFGBuilder(const string &path, const vector<string> &tokens) {
     openRulesFile.open(path, ios::in);
     if (!openRulesFile.is_open()) {
         printErrorMessage("Can't find the required file");
     } else {
         for (const auto &token: tokens) {
-            this->terminalMap[token] = new Terminal(token);
+            //this->terminalMap[token] = new Terminal(token);
+            this->terminalMap.insert(token);
         }
         buildCFG();
     }
@@ -59,21 +58,22 @@ void CFGBuilding::decodeRule(string &line) {
     updateProduction(lhs, rhs);
 }
 
-Terminal *CFGBuilding::checkTerminal(string buffer) {
+/**Terminal**/ string CFGBuilding::checkTerminal(string buffer) {
     extract(buffer);
     auto it = this->terminalMap.find(buffer);
     if (it == this->terminalMap.end()) {
-        cout<<"Terminal " << buffer << " is not found in lexical analyzer tokens.\n";
+        cout << "Terminal " << buffer << " is not found in lexical analyzer tokens.\n";
         cout << "Add it to the parser terminals.\n";
-        auto *t = new Terminal(buffer);
-        this->terminalMap[buffer] = t;
+        //auto *t = new Terminal(buffer);
+        //this->terminalMap[buffer] = t;
+        this->terminalMap.insert(buffer);
     }
-    return this->terminalMap[buffer];
+    //return this->terminalMap[buffer];
+    return buffer;
 }
 
 RHSState CFGBuilding::checkRHS(string line) {
     extract(line);
-    cout << "line: " << line << endl;
     vector<vector<string>> rhs;
     string buffer;
     bool terminalFlag = false;
@@ -87,25 +87,25 @@ RHSState CFGBuilding::checkRHS(string line) {
                 if (buffer == "epsilon" || buffer == "EPSILON" || buffer == "\\L") {
                     rhs[currVec].push_back(EPSILON);
                 } else {
-                    rhs[currVec].push_back(checkTerminal(buffer)->getId());
+                    rhs[currVec].push_back(checkTerminal(buffer));
                 }
             } else {
                 if (!buffer.empty()) {
-                    rhs[currVec].push_back(addNonTerminal(buffer)->getId());
+                    rhs[currVec].push_back(addNonTerminal(buffer));
                 }
                 terminalFlag = true;
             }
             buffer = "";
         } else if (c == '|') {
             if (!buffer.empty()) {
-                rhs[currVec].push_back(addNonTerminal(buffer)->getId());
+                rhs[currVec].push_back(addNonTerminal(buffer));
             }
             rhs.push_back(vector<string>());
             currVec++;
             buffer = "";
         } else if (c == ' ' && !terminalFlag) {
             if (!buffer.empty()) {
-                rhs[currVec].push_back(addNonTerminal(buffer)->getId());
+                rhs[currVec].push_back(addNonTerminal(buffer));
             }
             buffer = "";
         } else {
@@ -114,7 +114,7 @@ RHSState CFGBuilding::checkRHS(string line) {
     }
 
     if (!buffer.empty() && !terminalFlag) {
-        rhs[currVec].push_back(addNonTerminal(buffer)->getId());
+        rhs[currVec].push_back(addNonTerminal(buffer));
     }
 
     // There is a closing quote missing so return an empty vector to be interpreted as error in format.
@@ -137,7 +137,7 @@ void CFGBuilding::updateProduction(string lhs, vector<vector<string>> rhs) {
 }
 
 string CFGBuilding::getLastProductionLHS() {
-    return this->productionRules.back()->getLHS()->getId();
+    return this->productionRules.back()->getLHS();
 }
 
 
@@ -153,16 +153,17 @@ string CFGBuilding::checkLHS(string &line, unsigned int &index) {
     return "";
 }
 
-NonTerminal *CFGBuilding::addNonTerminal(string prodKey) {
+string CFGBuilding::addNonTerminal(string prodKey) {
     extract(prodKey);
     auto it = this->nonTerminalMap.find(prodKey);
-    if (it == this->nonTerminalMap.end()) {
-        this->nonTerminalMap[prodKey] = new NonTerminal(prodKey);
-    }
-    return this->nonTerminalMap[prodKey];
+    if (it->empty()) nonTerminalMap.insert(prodKey);
+    return prodKey;
 }
 
 vector<Production *> CFGBuilding::getProductionRules() {
     return this->productionRules;
 }
+
+set<string> CFGBuilding::getTerminalMap() { return this->terminalMap; }
+set<string> CFGBuilding::getNonTerminalMap() {return this->nonTerminalMap; }
 

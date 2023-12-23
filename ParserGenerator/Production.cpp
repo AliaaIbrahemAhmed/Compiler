@@ -6,11 +6,11 @@
 
 Production::Production() {}
 
-Production::Production(NonTerminal* lhs, vector<vector<string>>& rhs) {
+Production::Production(string lhs, vector<vector<string>>& rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
 }
-NonTerminal* Production::getLHS() {return this->lhs;}
+string Production::getLHS() {return this->lhs;}
 vector<vector<string>> Production::getRHS() {return this->rhs;}
 
 void Production::setRHS(vector<vector<string>> rhs) { this->rhs = rhs; }

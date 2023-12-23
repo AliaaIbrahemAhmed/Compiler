@@ -6,23 +6,22 @@
 #define COMPILER_PRODUCTION_H
 #include "string"
 #include "vector"
-#include "NonTerminal.h"
 
 using namespace std;
 
 class Production {
 private:
-    NonTerminal* lhs;
+    string lhs;
     vector<vector<string>> rhs;
 public:
     Production();
-    Production(NonTerminal* lhs, vector<vector<string>>& rhs);
+    Production(string lhs, vector<vector<string>>& rhs);
 
     explicit Production(int vector);
 
     //NonTerminal* getLHS();
     vector<vector<string>> getRHS();
-    NonTerminal* getLHS();
+    string getLHS();
 
     void setRHS(vector<vector<string>> rhs);
     void addToRHS(vector<vector<string>> anotherRHS);
