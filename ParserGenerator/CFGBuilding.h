@@ -26,7 +26,6 @@ private:
     vector<Production*> productionRules;
     RulesMap rulesMapping;
     string getLastProductionLHS();
-    void printErrorMessage(string message);
     string checkLHS(string& line, unsigned int& index);
     vector<vector<string>> checkRHS(string line);
     Terminal* checkTerminal(string buffer);

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "CFGBuilding.h"
 #include "Terminal.h"
+#include "utilities.h"
 
 void
 CFGBuilding::CFGBuilder(const string &path, const vector<string> &tokens) {
@@ -18,23 +19,8 @@ CFGBuilding::CFGBuilder(const string &path, const vector<string> &tokens) {
         }
         buildCFG();
     }
-
 }
 
-string trim(string &str) {
-    str.erase(0, str.find_first_not_of(' '));       //prefixing spaces
-    str.erase(str.find_last_not_of(' ') + 1);         //surfixing spaces
-    return str;
-}
-
-void removeSpaces(string &str) {
-    string str2;
-    for (char c: str) {
-        if (c == ' ' && str2.back() == ' ') continue;
-        str2 += c;
-    }
-    str = trim(str2);
-}
 
 void CFGBuilding::buildCFG() {
     string line;
@@ -70,27 +56,23 @@ void CFGBuilding::decodeRule(string &line) {
         return;
     }
 
-//    // Print the non-terminal lhs
-//    std::cout << "Non-terminal LHS: " << lhs << std::endl;
-
     updateProduction(lhs, rhs);
 }
 
 Terminal *CFGBuilding::checkTerminal(string buffer) {
-    trim(buffer);
+    extract(buffer);
     auto it = this->terminalMap.find(buffer);
     if (it == this->terminalMap.end()) {
-        cout << "Terminal " + buffer + " is not found in lexical analyzer tokens.\n";
+        cout<<"Terminal " << buffer << " is not found in lexical analyzer tokens.\n";
         cout << "Add it to the parser terminals.\n";
-        Terminal *t = new Terminal(buffer);
+        auto *t = new Terminal(buffer);
         this->terminalMap[buffer] = t;
     }
-    cout << "error is here???????? YES" << endl;
     return this->terminalMap[buffer];
 }
 
 RHSState CFGBuilding::checkRHS(string line) {
-    trim(line);
+    extract(line);
     cout << "line: " << line << endl;
     vector<vector<string>> rhs;
     string buffer;
@@ -98,23 +80,18 @@ RHSState CFGBuilding::checkRHS(string line) {
     rhs.push_back(vector<string>());
     unsigned int currVec = 0;
 
-    for (unsigned int i = 0; i < line.size(); ++i) {
-        char c = line[i];
-
-        if (c == 0x27 || c == 0x91 ||c == 0x92 ) {
+    for (char c: line) {
+        if (c == 0x27 || c == 0x91 || c == 0x92) {
             if (terminalFlag) {
                 terminalFlag = false;
                 if (buffer == "epsilon" || buffer == "EPSILON" || buffer == "\\L") {
                     rhs[currVec].push_back(EPSILON);
-                    cout << "epsilon: " << buffer << endl;
                 } else {
-                    cout << "Terminal: " << buffer << endl;
                     rhs[currVec].push_back(checkTerminal(buffer)->getId());
                 }
             } else {
                 if (!buffer.empty()) {
                     rhs[currVec].push_back(addNonTerminal(buffer)->getId());
-                    cout << "Non-terminal: " << buffer << endl;
                 }
                 terminalFlag = true;
             }
@@ -128,7 +105,6 @@ RHSState CFGBuilding::checkRHS(string line) {
             buffer = "";
         } else if (c == ' ' && !terminalFlag) {
             if (!buffer.empty()) {
-                if (buffer == "‘") cout << "finsh2allah dah" << endl;
                 rhs[currVec].push_back(addNonTerminal(buffer)->getId());
             }
             buffer = "";
@@ -164,11 +140,6 @@ string CFGBuilding::getLastProductionLHS() {
     return this->productionRules.back()->getLHS()->getId();
 }
 
-string extract(string &str) {
-    str.erase(0, str.find_first_not_of(' '));       //prefixing spaces
-    str.erase(str.find_last_not_of(' ') + 1);         //surfixing spaces
-    return str;
-}
 
 string CFGBuilding::checkLHS(string &line, unsigned int &index) {
     string lhs;
@@ -193,9 +164,5 @@ NonTerminal *CFGBuilding::addNonTerminal(string prodKey) {
 
 vector<Production *> CFGBuilding::getProductionRules() {
     return this->productionRules;
-}
-
-void CFGBuilding::printErrorMessage(string message) {
-    cerr << "Error: " << message << endl;
 }
 
