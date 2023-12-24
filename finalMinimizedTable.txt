@@ -1,4 +1,4 @@
-Transition Table with States( 0 )
+Transition Table with States( 44 )
     q178 on Symbol: w -> { q96 1}
     q178 on Symbol: u -> { q96 1}
     q178 on Symbol: 6 -> { q96 1}

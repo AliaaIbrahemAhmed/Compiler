@@ -9,8 +9,10 @@
 #include "NFATODFA.h"
 #include "Matcher.h"
 #include <sstream>
+#include <algorithm>
 
 #include "DFAMinimization.h"
+#include "ParserGenerator/CFGBuilding.h"
 
 using namespace std;
 
@@ -37,7 +39,10 @@ void printTransitionTable(TRANSITION_TABLE transtionTable) {
 
 
 int main() {
-    Input input = *new Input("D:\\Com\\input");
+//    string tt= "yarab 221 17/1/2000";
+//    Terminal nodeTerminal = *new Terminal(tt);
+//    cout<<"yarab"<<nodeTerminal.getId()<<endl;
+    Input input = *new Input("D:\\4thyear\\Compiler\\input.txt");
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     printTransitionTable(nfa.nfa);
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
@@ -61,19 +66,21 @@ int main() {
     }
     cout << res.DFA.size();
     Matcher matcher=*new Matcher();
-    matcher.set_output_file_name("D:\\Com\\output.txt");
-    std::ifstream inputFile("D:\\Com\\test.txt");
+    CFGBuilding CFGBuilding;
+
+    matcher.set_output_file_name("D:\\4thyear\\Compiler\\output.txt");
+    std::ifstream inputFile("D:\\4thyear\\Compiler\\test.txt");
     if (!inputFile.is_open()) {
         std::cerr << "Error opening input file" << std::endl;
         return 1;
     }
 
-    std::vector<std::string> tokens;
-    std::string line;
-    while (std::getline(inputFile, line)) {
-        std::istringstream iss(line);
-        std::string token;
-        while (iss >> std::ws >> token) {  // Use std::ws to skip leading white spaces
+    vector<string> tokens;
+    string line;
+    while (getline(inputFile, line)) {
+        istringstream iss(line);
+        string token;
+        while (iss >> ws >> token) {  // Use std::ws to skip leading white spaces
             // Add the token to the vector
             tokens.push_back(token);
         }
@@ -83,6 +90,28 @@ int main() {
     inputFile.close();
     matcher.match(tokens, minimizedRes);
     set<string> symbol_table = matcher.get_symbol_table();
+    CFGBuilding.CFGBuilder("D:\\4thyear\\Compiler\\ParserGenerator\\rules.txt",matcher.tokensName);
+    /********************/
+    // Assuming productionRules is a vector<Production*>
+    for (const auto& production : CFGBuilding.getProductionRules()) {
+        // Get the lhs and rhs of each Production
+        string lhs = production->getLHS();
+        vector<vector<string>> rhs = production->getRHS();
+
+        // Print the lhs
+        std::cout << "LHS: " << lhs << std::endl;
+
+        // Print the rhs
+        std::cout << "RHS:" << std::endl;
+        for (const auto& subVector : rhs) {
+            for (const auto& element : subVector) {
+                std::cout << element <<" ";
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+    }
     cout << "Symbol Table:" << endl;
     for (const string& symbol : symbol_table) {
         cout << symbol << endl;

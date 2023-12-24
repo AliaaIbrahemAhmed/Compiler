@@ -18,7 +18,7 @@ Node NFATODFA::eClosure(Node& node)
 		set<State> statesSet;
 		statesSet.insert(fromState);
 		Node key(statesSet);
-		//get transtion of state
+		//getId transtion of state
 		NFA_TRANSITIONS transitions = this->transitionTable[key];
 		//check for epsilon transition
 		auto range = transitions.equal_range(EPSILON);
@@ -91,7 +91,7 @@ DfaResult NFATODFA::nfaToDfa(Node startNode, vector<string>& inputs)
 		for (string input : inputs) {
 			set<State> statesEClosure;
 			for (State state : curNode.states) {
-				// get transitions of each state in tranisiton table
+				// getId transitions of each state in tranisiton table
 				Node key({ state });
 				NFA_TRANSITIONS transitions = this->transitionTable[key];
 				//skip if a transition does not exist

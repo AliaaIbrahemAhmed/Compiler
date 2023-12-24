@@ -83,6 +83,8 @@ bool Matcher::matchToken(string str, DfaResult minimized_DFA)
     {
         string type = endMap[tempNode];
         this->output = this->output + type + '\n';
+        this->tokensName.push_back(type);
+        //cout<< "tokensName -->"<<type<<endl;
         if(type == "id")
         {
             this->symbol_table.insert(str);
@@ -101,6 +103,10 @@ bool Matcher::matchToken(string str, DfaResult minimized_DFA)
         {
             string type = endMap[tempNode];
             this->output = this->output + type + '\n';
+
+            this->tokensName.push_back(type);
+            //cout<< "tokens2 -->"<<type<<endl;
+
             if(type == "id")
             {
                 this->symbol_table.insert(str.substr(0,iter));

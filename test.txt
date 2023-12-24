@@ -1,5 +1,1 @@
-int sum# , count , pass , mnt ; while (pass !=
-pp)
-{
-pass = pass + 1 ;
-}
+while (x>50) x = x-1;

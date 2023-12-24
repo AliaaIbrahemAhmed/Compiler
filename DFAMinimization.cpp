@@ -124,17 +124,17 @@ mappingTransitions(const vector<unordered_set<Node>> &groups, const DfaResult df
     for (const auto &T: groups) {
         //Renaming for the states will be the first element in the partition
         Node repState = *T.begin();
-        cout << "states " << T.begin()->states.begin()->name << endl;
+//        cout << "states " << T.begin()->states.begin()->name << endl;
         representativeStates[repState] = repState;
         dd++;
         for (auto it = next(T.begin(), 1); it != T.end(); ++it) {
             representativeStates[*it] = repState;
         }
     }
-    cout << "representatioe numbers: " << dd << endl;
+//    cout << "representatioe numbers: " << dd << endl;
 
     DFA_TRANSITION_TABLE finalTransitions;
-    cout << "size of groups: " << groups.size() << endl;
+    //cout << "size of groups: " << groups.size() << endl;
     for (const auto &T: groups) {
         Node repState = representativeStates[*T.begin()];
         DFA_TRANSITIONS transitions;
@@ -250,14 +250,14 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
             subgroups["NonAccepting"].insert(currentNode);
         }
     }
-    for (const auto &subgroup: subgroups) {
-        std::cout << "Subgroup: " << subgroup.first << std::endl;
-        std::cout << "States: ";
-        for (const auto &node: subgroup.second) {
-            std::cout << node.states.begin()->name << " ";
-        }
-        std::cout << std::endl;
-    }
+//    for (const auto &subgroup: subgroups) {
+//        std::cout << "Subgroup: " << subgroup.first << std::endl;
+//        std::cout << "States: ";
+//        for (const auto &node: subgroup.second) {
+//            std::cout << node.states.begin()->name << " ";
+//        }
+//        std::cout << std::endl;
+//    }
     unordered_map<string, unordered_set<Node>> endingSubgroups = getEndingNodes(subgroups["Accepting"], endMap);
 // Remove non-accepting nodes from subgroups
     subgroups.erase("Accepting");
@@ -277,7 +277,7 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
         }
         std::cout << std::endl;
     }**/
-    std::cout << "size of subgroups group: " << subgroups.size() << std::endl;
+//    std::cout << "size of subgroups group: " << subgroups.size() << std::endl;
 
     bool changed = true;
     set<string> inputSymbols = getInputs(dfa);
@@ -291,15 +291,9 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
         }
         groups = newGroups;
     }
-    for (const auto &group: groups) {
-        std::cout << "Group:" << std::endl;
-        for (const auto &node: group) {
-            // Assuming each Node has a method 'getName()' to get its name
-            std::cout << node.states.begin()->name << std::endl;
-        }
-    }
+
     DFAMinimization::sizeMinimized = groups.size();
-    std::cout << "size of final minimized group: " << groups.size() << std::endl;
+//    std::cout << "size of final minimized group: " << groups.size() << std::endl;
     DfaResult finalRes = mappingTransitions(groups, transitionMap);
     DFA_TRANSITION_TABLE temp = finalRes.DFA;
     // have to change to DFA result yet

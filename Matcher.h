@@ -24,7 +24,7 @@ public:
     virtual ~Matcher();
 
     set<string> get_symbol_table();
-
+    vector<string> tokensName;
     void match(vector<string> token,DfaResult minimized_DFA);
 
     void set_output_file_name(string output_file_name);
