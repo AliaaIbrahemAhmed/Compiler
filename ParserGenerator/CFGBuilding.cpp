@@ -156,7 +156,10 @@ string CFGBuilding::checkLHS(string &line, unsigned int &index) {
 string CFGBuilding::addNonTerminal(string prodKey) {
     extract(prodKey);
     auto it = this->nonTerminalMap.find(prodKey);
-    if (it->empty()) nonTerminalMap.insert(prodKey);
+    if (it->empty()) {
+        nonTerminalMap.insert(prodKey);
+        orderedNonTerminal.push_back(prodKey);
+    }
     return prodKey;
 }
 
@@ -165,5 +168,6 @@ vector<Production *> CFGBuilding::getProductionRules() {
 }
 
 set<string> CFGBuilding::getTerminalMap() { return this->terminalMap; }
-set<string> CFGBuilding::getNonTerminalMap() {return this->nonTerminalMap; }
 
+set<string> CFGBuilding::getNonTerminalMap() { return this->nonTerminalMap; }
+vector<string> CFGBuilding::getOrderedNonTerminal() { return this->orderedNonTerminal; }

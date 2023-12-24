@@ -21,6 +21,7 @@ class CFGBuilding {
 private:
     set<string> terminalMap;
     set<string> nonTerminalMap;
+    vector<string> orderedNonTerminal;
     fstream openRulesFile;
     vector<Production*> productionRules;
     RulesMap rulesMapping;
@@ -38,6 +39,7 @@ public:
     vector<Production*> getProductionRules();
     set<string> getTerminalMap();
     set<string> getNonTerminalMap();
+    vector<string> getOrderedNonTerminal();
 };
 
 
