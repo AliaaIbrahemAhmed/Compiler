@@ -25,7 +25,7 @@ public:
 
     void setRHS(vector<vector<string>> rhs);
     void addToRHS(vector<vector<string>> anotherRHS);
-
+    string toString();
 };
 
 

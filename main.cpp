@@ -13,6 +13,7 @@
 
 #include "DFAMinimization.h"
 #include "ParserGenerator/CFGBuilding.h"
+#include "ParserGenerator/CFG.h"
 
 using namespace std;
 
@@ -92,8 +93,14 @@ int main() {
     set<string> symbol_table = matcher.get_symbol_table();
     CFGBuilding.CFGBuilder("D:\\4thyear\\Compiler\\ParserGenerator\\rules.txt",matcher.tokensName);
     /********************/
+    vector<Production *> rules = CFGBuilding.getProductionRules();
+    CFG cfg = *new CFG(rules);
+
+    // Eliminate left recursion and left refactoring
+    cfg.eliminateLeftRecursion();
+    cfg.eliminateLeftRefactoring();
     // Assuming productionRules is a vector<Production*>
-    for (const auto& production : CFGBuilding.getProductionRules()) {
+    for (const auto& production : cfg.getProcs()) {
         // Get the lhs and rhs of each Production
         string lhs = production->getLHS();
         vector<vector<string>> rhs = production->getRHS();

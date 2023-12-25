@@ -1,7 +1,1 @@
-E = T E’
-E’ = + T E’
-| \L
-T = F T’
-T’ = * F T’
-| \L
-F = 'id' | (E)
+E = E + T | T
