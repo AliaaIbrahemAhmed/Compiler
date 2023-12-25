@@ -8,128 +8,161 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="D:/com/cmake-build-debug"/>
+				<Option working_dir="/home/aliaa/CLionProjects/Compiler/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="Compiler">
-				<Option output="D:/com/cmake-build-debug/Compiler.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="D:/com/cmake-build-debug"/>
+				<Option output="/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Compiler" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/aliaa/CLionProjects/Compiler/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="D:/com/."/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+					<Add directory="/home/aliaa/CLionProjects/Compiler/."/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 Compiler"/>
-					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 Compiler"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="Compiler/fast">
-				<Option output="D:/com/cmake-build-debug/Compiler.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="D:/com/cmake-build-debug"/>
+				<Option output="/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Compiler" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/aliaa/CLionProjects/Compiler/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="D:/com/."/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
-					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+					<Add directory="/home/aliaa/CLionProjects/Compiler/."/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 Compiler/fast"/>
-					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 Compiler/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="D:/com/cmake-build-debug"/>
+				<Option working_dir="/home/aliaa/CLionProjects/Compiler/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="D:/com/cmake-build-debug"/>
+				<Option working_dir="/home/aliaa/CLionProjects/Compiler/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;D:/com/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/aliaa/CLionProjects/Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="D:/com/Input.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/CFGBuilding.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/Input.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/CFGBuilding.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/LexicalRules.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/FirstAndFollow.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/LexicalRules.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/FirstAndFollow.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/Matcher.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/Production.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/Matcher.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/Production.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/NFA.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/main.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/NFA.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/ParserGenerator/main.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/NFATODFA.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/DFAMinimization.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/NFATODFA.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/DFAMinimization.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/Node.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/Input.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/Node.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/Input.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/State.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/LexicalRules.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/State.h">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/LexicalRules.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/main.cpp">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/Matcher.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/com/CMakeLists.txt">
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/Matcher.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/NFA.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/NFA.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/NFATODFA.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/NFATODFA.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/Node.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/Node.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/State.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/phase1/State.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/utilities.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/utilities.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="/home/aliaa/CLionProjects/Compiler/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

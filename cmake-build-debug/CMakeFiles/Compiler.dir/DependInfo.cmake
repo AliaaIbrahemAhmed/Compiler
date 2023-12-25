@@ -4,28 +4,23 @@ set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
 
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
-  "CXX"
-  )
-# The set of files for implicit dependencies of each language:
-set(CMAKE_DEPENDS_CHECK_CXX
-  "D:/com/Input.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/Input.cpp.obj"
-  "D:/com/LexicalRules.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/LexicalRules.cpp.obj"
-  "D:/com/Matcher.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/Matcher.cpp.obj"
-  "D:/com/NFA.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/NFA.cpp.obj"
-  "D:/com/NFATODFA.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/NFATODFA.cpp.obj"
-  "D:/com/Node.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/Node.cpp.obj"
-  "D:/com/State.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/State.cpp.obj"
-  "D:/com/main.cpp" "D:/com/cmake-build-debug/CMakeFiles/Compiler.dir/main.cpp.obj"
-  )
-set(CMAKE_CXX_COMPILER_ID "GNU")
-
-# The include file search paths:
-set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "../."
   )
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/aliaa/CLionProjects/Compiler/ParserGenerator/CFGBuilding.cpp" "CMakeFiles/Compiler.dir/ParserGenerator/CFGBuilding.cpp.o" "gcc" "CMakeFiles/Compiler.dir/ParserGenerator/CFGBuilding.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/ParserGenerator/FirstAndFollow.cpp" "CMakeFiles/Compiler.dir/ParserGenerator/FirstAndFollow.cpp.o" "gcc" "CMakeFiles/Compiler.dir/ParserGenerator/FirstAndFollow.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/ParserGenerator/Production.cpp" "CMakeFiles/Compiler.dir/ParserGenerator/Production.cpp.o" "gcc" "CMakeFiles/Compiler.dir/ParserGenerator/Production.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/ParserGenerator/main.cpp" "CMakeFiles/Compiler.dir/ParserGenerator/main.cpp.o" "gcc" "CMakeFiles/Compiler.dir/ParserGenerator/main.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/DFAMinimization.cpp" "CMakeFiles/Compiler.dir/phase1/DFAMinimization.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/DFAMinimization.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/Input.cpp" "CMakeFiles/Compiler.dir/phase1/Input.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/Input.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/LexicalRules.cpp" "CMakeFiles/Compiler.dir/phase1/LexicalRules.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/LexicalRules.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/Matcher.cpp" "CMakeFiles/Compiler.dir/phase1/Matcher.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/Matcher.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/NFA.cpp" "CMakeFiles/Compiler.dir/phase1/NFA.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/NFA.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/NFATODFA.cpp" "CMakeFiles/Compiler.dir/phase1/NFATODFA.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/NFATODFA.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/Node.cpp" "CMakeFiles/Compiler.dir/phase1/Node.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/Node.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/phase1/State.cpp" "CMakeFiles/Compiler.dir/phase1/State.cpp.o" "gcc" "CMakeFiles/Compiler.dir/phase1/State.cpp.o.d"
+  "/home/aliaa/CLionProjects/Compiler/utilities.cpp" "CMakeFiles/Compiler.dir/utilities.cpp.o" "gcc" "CMakeFiles/Compiler.dir/utilities.cpp.o.d"
   )
 
 # Targets to which this target links.
