@@ -13,7 +13,7 @@
 
 
 FirstAndFollow::FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
-                               const vector<string> &orderedNonTerminal, unordered_map<string, Production> rulesMapping)
+                               const vector<string> &orderedNonTerminal, unordered_map<string, Production*> rulesMapping)
         : terminalMap(
         terminalMap), nonTerminalMap(nonTerminalMap), orderedNonTerminal(orderedNonTerminal), rulesMapping(std::move(
         rulesMapping)) {
@@ -22,15 +22,15 @@ FirstAndFollow::FirstAndFollow(const set<string> &terminalMap, const set<string>
 
 
 void FirstAndFollow::generateFirstAndFollow() {
-    unordered_map<string, Production> rules = this->rulesMapping;
+    unordered_map<string, Production*> rules = this->rulesMapping;
     for (auto ntIt = this->orderedNonTerminal.rbegin(); ntIt != this->orderedNonTerminal.rend(); ++ntIt) {
-        pair<vector<string>, vector<Production>> firstRes = getFirstOfNonTerminal(rules[*ntIt]);
+        pair<vector<string>, vector<Production>> firstRes = getFirstOfNonTerminal(*rules[*ntIt]);
         first[*ntIt] = firstRes.first;
         firstProductionMap[*ntIt] = firstRes.second;
     }
     bool isStartingSymbol = true;
     for (auto &ntIt: this->orderedNonTerminal) {
-        pair<vector<string>, vector<Production>> followRes = getFollowOfNonTerminal(rules[ntIt], isStartingSymbol);
+        pair<vector<string>, vector<Production>> followRes = getFollowOfNonTerminal(*rules[ntIt], isStartingSymbol);
         follow[ntIt] = followRes.first;
         isStartingSymbol = false;
     }
@@ -84,10 +84,10 @@ bool checkForEpsilon(vector<string> vec) {
 
 pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(const string &nt) {
     pair<vector<string>, vector<Production>> res;
-    unordered_map<string, Production> rules = this->rulesMapping;
+    unordered_map<string, Production*> rules = this->rulesMapping;
 
     for (const auto &rule: rules) {
-        Production pd = rule.second;
+        Production pd = *rule.second;
         string lhs = pd.getLHS();
         vector<vector<string>> rightHandSides = pd.getRHS();
         for (vector<string> rhs: rightHandSides) {
