@@ -6,6 +6,7 @@
 #include "FirstAndFollow.h"
 #include <algorithm>
 #include <utility>
+#include <unordered_set>
 
 #define DollarSign "$"
 #define EPSILON "\\L"
@@ -93,7 +94,7 @@ pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(c
             for (int i = 0; i < rhs.size(); i++) {
                 if (rhs[i] == nt) {
                     if (i == rhs.size() - 1 || (i == rhs.size() - 2 && !isInTerminalMap(rhs[i + 1]) &&
-                                                 checkForEpsilon(first[rhs[i + 1]]) && nt != lhs)) {
+                                                 checkForEpsilon(first[rhs[i + 1]]) && nt != lhs )) {
                         vector<string> nTLHSFollow = follow[lhs];
                         res.first.insert(res.first.end(), nTLHSFollow.begin(), nTLHSFollow.end());
                     }
@@ -109,6 +110,9 @@ pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(c
             }
         }
     }
+    sort( res.first.begin(), res.first.end() );
+    res.first.erase( unique( res.first.begin(), res.first.end() ), res.first.end() );
+
     return res;
 }
 
