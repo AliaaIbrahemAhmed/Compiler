@@ -13,16 +13,16 @@
 
 
 FirstAndFollow::FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
-                               const vector<string> &orderedNonTerminal, unordered_map<string, Production*> rulesMapping)
+                               const vector<string> &orderedNonTerminal, vector<Production *> rules)
         : terminalMap(
-        terminalMap), nonTerminalMap(nonTerminalMap), orderedNonTerminal(orderedNonTerminal), rulesMapping(std::move(
-        rulesMapping)) {
-
+        terminalMap), nonTerminalMap(nonTerminalMap), orderedNonTerminal(orderedNonTerminal), rules(std::move(
+        rules)) {
+            generateRulesMapping();
 }
 
 
 void FirstAndFollow::generateFirstAndFollow() {
-    unordered_map<string, Production*> rules = this->rulesMapping;
+    unordered_map<string, Production *> rules = this->rulesMapping;
     for (auto ntIt = this->orderedNonTerminal.rbegin(); ntIt != this->orderedNonTerminal.rend(); ++ntIt) {
         pair<vector<string>, vector<Production>> firstRes = getFirstOfNonTerminal(*rules[*ntIt]);
         first[*ntIt] = firstRes.first;
@@ -46,10 +46,9 @@ pair<vector<string>, vector<Production>> FirstAndFollow::getFirstOfNonTerminal(P
             vector<vector<string>> newRHS;
             newRHS.push_back(rhs);
             Production p = *new Production(lhs, newRHS);
-            res.second.push_back(pd);
+            res.second.push_back(p);
         } else if (isInNonTerminalMap(rhs[0])) {
             vector<string> nTRHSFirsts = first[rhs[0]];
-            vector<Production> nTRHSFirstsProductions = firstProductionMap[rhs[0]];
             res.first.insert(res.first.end(), nTRHSFirsts.begin(), nTRHSFirsts.end());
             vector<vector<string>> newRHS;
             newRHS.push_back(rhs);
@@ -84,7 +83,7 @@ bool checkForEpsilon(vector<string> vec) {
 
 pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(const string &nt) {
     pair<vector<string>, vector<Production>> res;
-    unordered_map<string, Production*> rules = this->rulesMapping;
+    unordered_map<string, Production *> rules = this->rulesMapping;
 
     for (const auto &rule: rules) {
         Production pd = *rule.second;
@@ -94,7 +93,7 @@ pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(c
             for (int i = 0; i < rhs.size(); i++) {
                 if (rhs[i] == nt) {
                     if (i == rhs.size() - 1 || (i == rhs.size() - 2 && !isInTerminalMap(rhs[i + 1]) &&
-                                                 checkForEpsilon(first[rhs[i + 1]]) && nt != lhs )) {
+                                                checkForEpsilon(first[rhs[i + 1]]) && nt != lhs)) {
                         vector<string> nTLHSFollow = follow[lhs];
                         res.first.insert(res.first.end(), nTLHSFollow.begin(), nTLHSFollow.end());
                     }
@@ -110,8 +109,8 @@ pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(c
             }
         }
     }
-    sort( res.first.begin(), res.first.end() );
-    res.first.erase( unique( res.first.begin(), res.first.end() ), res.first.end() );
+    sort(res.first.begin(), res.first.end());
+    res.first.erase(unique(res.first.begin(), res.first.end()), res.first.end());
 
     return res;
 }
@@ -137,4 +136,10 @@ bool FirstAndFollow::isNonTerminal(const vector<string> &rhs) {
         if (!isInNonTerminalMap(s)) return false;
     }
     return true;
+}
+
+void FirstAndFollow::generateRulesMapping() {
+    for (auto p: rules) {
+        rulesMapping[p->getLHS()] = p;
+    }
 }
