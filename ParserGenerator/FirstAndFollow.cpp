@@ -9,27 +9,27 @@
 
 #define DollarSign "$"
 #define EPSILON "\\L"
-using RulesMap = unordered_map<string, Production *>;
 
 
 FirstAndFollow::FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
-                               const vector<string> &orderedNonTerminal, RulesMap rulesMapping) : terminalMap(
+                               const vector<string> &orderedNonTerminal, unordered_map<string, Production> rulesMapping)
+        : terminalMap(
         terminalMap), nonTerminalMap(nonTerminalMap), orderedNonTerminal(orderedNonTerminal), rulesMapping(std::move(
         rulesMapping)) {
-    
+
 }
 
 
 void FirstAndFollow::generateFirstAndFollow() {
-    unordered_map<string, Production *> rules = this->rulesMapping;
+    unordered_map<string, Production> rules = this->rulesMapping;
     for (auto ntIt = this->orderedNonTerminal.rbegin(); ntIt != this->orderedNonTerminal.rend(); ++ntIt) {
-        pair<vector<string>, vector<Production>> firstRes = getFirstOfNonTerminal(*rules[*ntIt]);
+        pair<vector<string>, vector<Production>> firstRes = getFirstOfNonTerminal(rules[*ntIt]);
         first[*ntIt] = firstRes.first;
         firstProductionMap[*ntIt] = firstRes.second;
     }
     bool isStartingSymbol = true;
     for (auto &ntIt: this->orderedNonTerminal) {
-        pair<vector<string>, vector<Production>> followRes = getFollowOfNonTerminal(*rules[ntIt], isStartingSymbol);
+        pair<vector<string>, vector<Production>> followRes = getFollowOfNonTerminal(rules[ntIt], isStartingSymbol);
         follow[ntIt] = followRes.first;
         isStartingSymbol = false;
     }
@@ -72,25 +72,35 @@ pair<vector<string>, vector<Production>> FirstAndFollow::getFollowOfNonTerminal(
     return res;
 }
 
-pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(const string& nt) {
+bool checkForEpsilon(vector<string> vec) {
+    for (const auto &s: vec) {
+        if (s == EPSILON) {
+            return true;
+        }
+    }
+    return false;
+}
+
+pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(const string &nt) {
     pair<vector<string>, vector<Production>> res;
-    unordered_map<string, Production *> rules = this->rulesMapping;
+    unordered_map<string, Production> rules = this->rulesMapping;
 
     for (const auto &rule: rules) {
-        Production pd = *rule.second;
+        Production pd = rule.second;
         string lhs = pd.getLHS();
         vector<vector<string>> rightHandSides = pd.getRHS();
         for (vector<string> rhs: rightHandSides) {
             for (int i = 0; i < rhs.size(); i++) {
                 if (rhs[i] == nt) {
-                    if (i == rhs.size() - 1 || (i == rhs.size() - 2 &&
-                                                find(first[rhs[i + 1]].begin(), first[rhs[i + 1]].end(), EPSILON) !=
-                                                first[rhs[i + 1]].end())) {
+                    if (i == rhs.size() - 1 || (i == rhs.size() - 2 && !isInTerminalMap(rhs[i + 1]) &&
+                                                 checkForEpsilon(first[rhs[i + 1]]) && nt != lhs)) {
                         vector<string> nTLHSFollow = follow[lhs];
                         res.first.insert(res.first.end(), nTLHSFollow.begin(), nTLHSFollow.end());
                     }
                     if (i < rhs.size() - 1) {
-                        vector<string> ntFirst = first[rhs[i + 1]];
+                        vector<string> ntFirst;
+                        if (isInNonTerminalMap(rhs[i + 1])) ntFirst = first[rhs[i + 1]];
+                        else if (isInTerminalMap(rhs[i + 1])) ntFirst = {rhs[i + 1]};
                         auto itr = std::find(ntFirst.begin(), ntFirst.end(), EPSILON);
                         if (itr != ntFirst.end()) ntFirst.erase(itr);
                         res.first.insert(res.first.end(), ntFirst.begin(), ntFirst.end());
@@ -103,23 +113,23 @@ pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(c
 }
 
 
-bool FirstAndFollow::isInTerminalMap(const string& s) {
+bool FirstAndFollow::isInTerminalMap(const string &s) {
     return (this->terminalMap.find(s) != this->terminalMap.end());
 }
 
-bool FirstAndFollow::isInNonTerminalMap(const string& s) {
+bool FirstAndFollow::isInNonTerminalMap(const string &s) {
     return (this->nonTerminalMap.find(s) != this->nonTerminalMap.end());
 }
 
-bool FirstAndFollow::isTerminal(const vector<string>& rhs) {
-    for (const string& s: rhs) {
+bool FirstAndFollow::isTerminal(const vector<string> &rhs) {
+    for (const string &s: rhs) {
         if (!isInTerminalMap(s)) return false;
     }
     return true;
 }
 
-bool FirstAndFollow::isNonTerminal(const vector<string>& rhs) {
-    for (const string& s: rhs) {
+bool FirstAndFollow::isNonTerminal(const vector<string> &rhs) {
+    for (const string &s: rhs) {
         if (!isInNonTerminalMap(s)) return false;
     }
     return true;

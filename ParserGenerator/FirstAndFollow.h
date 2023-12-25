@@ -16,7 +16,7 @@ public:
     set<string> terminalMap;
     set<string> nonTerminalMap;
     vector<string> orderedNonTerminal;
-    RulesMap rulesMapping;
+    unordered_map<basic_string<char>, Production> rulesMapping;
 
     unordered_map<string, vector<string>> first;
     unordered_map<string, vector<Production>> firstProductionMap;
@@ -25,7 +25,7 @@ public:
     unordered_map<string, vector<Production>> followProductionMap;
 
     FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
-                   const vector<string> &orderedNonTerminal, RulesMap rulesMapping);
+                   const vector<string> &orderedNonTerminal, unordered_map<string, Production> rulesMapping);
 
 
     bool isInNonTerminalMap(const string& s);
