@@ -1,5 +1,6 @@
-#ifndef CFG_H
-#define CFG_H
+
+#ifndef CFG_HPP
+#define CFG_HPP
 
 #include <set>
 #include "Production.h"
@@ -7,29 +8,31 @@
 const string newNonTMark = "#";
 const char factoringMark = '?';
 
+/**
+ * @brief Context Free Grammar takes the rules and eliminate the left recursion, and
+ * left refactoring from it.
+*/
+
 class CFG {
 private:
-    vector<Production *> productions;
+    vector<Production *> rules;
+    set<string> nonTerminalMap;
+
+    void eliminateLeftRecursion();
+
+    void eliminateLeftRefactoring();
+
     int countCommon(std::vector<int> commonElemContainer, vector<vector<string>> rhs);
 
-    vector<int> findCommonElemIndices(vector<vector<string>> rhs);
-
-    void insertIntoRHS(unsigned int nonTerminalPos, unsigned int vectorPos, vector<vector<string>> toInsert);
-
-    void replaceProduction(Production *toInsert, Production *target);
-
-    bool hasLeftRecursion(Production *production);
+    vector<int> commonElemIndeces(vector<vector<string>> rhs);
 
 public:
     CFG();
 
-    CFG(vector<Production *> rules);
-    void eliminateLeftRecursion();
-    bool isNonTerminal(const string &symbol);
-    set<string> nonTerminalMap;
-    void eliminateLeftRefactoring();
-    Production *eliminateImmediateLeftRecursion(Production *production);
-    vector<Production*> getProcs();
+    CFG(vector<Production *> rules, set <string> nonTerminalMap);
+
+    vector<Production *> getProcs();
+    static set <string> checked;
 
 };
 

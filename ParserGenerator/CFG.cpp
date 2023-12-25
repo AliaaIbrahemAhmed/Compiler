@@ -1,196 +1,182 @@
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+#include "Production.h"
 #include "CFG.h"
 #include "CFGBuilding.h"
+#include "utilities.h"
 
-CFG::CFG(vector<Production *> productions) {
-    this->productions = productions;
+set <string> CFG::checked;
+CFG::CFG(vector<Production *> rules, set<string> nonTerminalMap) {
+    this->rules = rules;
+    this->nonTerminalMap = nonTerminalMap;
+    CFG::checked = nonTerminalMap;
     eliminateLeftRecursion();
     eliminateLeftRefactoring();
+
 }
 
-bool CFG::isNonTerminal(const string &symbol) {
-    return this->nonTerminalMap.find(symbol) != this->nonTerminalMap.end();
-};
-
-bool matchNonTerminals(string a, string b) { return a == b; }
-
-void removeRHS(std::vector<vector<string>> &v, std::vector<int> rm) {
-    std::for_each(rm.crbegin(), rm.crend(), [&v](auto index) { v.erase(begin(v) + index); });
-}
-
-void CFG::insertIntoRHS(unsigned int nonTerminalPos, unsigned int vectorPos, vector<vector<string>> toInsert) {
-    vector<string> currentVector = productions[vectorPos]->getRHS()[nonTerminalPos];
-    currentVector.erase(currentVector.begin());
-
-    for (vector<string> elemVector: toInsert) {
-        vector<string> newVector = currentVector;
-        newVector.insert(newVector.begin(), elemVector.begin(), elemVector.end());
-        toInsert.push_back(newVector);
-        //productions[vectorPos]->addRHS(newVector);
+// putIn Aa | b in place of S
+// rhs = Ac | dSe | f, vecPos = 1, NonTPos = 1
+// rhs = Ac | f | dAae | dbe
+void
+insertIntoRHS(unsigned int NonTPos, unsigned int vecPos, vector<vector<string>> putIn, vector<vector<string>> &rhs) {
+    // Store the target vector in repeatedVec and erase the non terminal from it before inserting its replacement.
+    // Also remove the target vector from the rhs before inserting the new ones.
+    vector<string> repeatedVec = rhs[vecPos];
+    repeatedVec.erase(repeatedVec.begin() + NonTPos);
+    for (vector<string> v: putIn) {
+        vector<string> currV = repeatedVec;
+        currV.insert(currV.begin() + NonTPos, v.begin(), v.end());
+        rhs.push_back(currV);
     }
 }
 
-void CFG::replaceProduction(Production *toInsert, Production *target) {
-    string nonTerminalToInsert = toInsert->getLHS();
-    vector<vector<string>> rhs = target->getRHS();
-    vector<int> indicesToRemove;
-    unsigned int length = rhs.size();
-    for (unsigned int i = 0; i < length; ++i) {
+bool match(string a, string b) { return a == b; }
+
+void removeIndicesFromVector(std::vector<vector<string>> &v, std::vector<int> rm) {
+    std::for_each(rm.crbegin(), rm.crend(), [&v](auto index) { v.erase(begin(v) + index); });
+}
+
+// S --> Aa | b
+// A --> Ac | dSe | f
+// then A --> Ac | f | dAae | dbe
+void replaceProduction(Production *putIn, Production *proc) {
+    string nonTtoPutIn = putIn->getLHS();
+    vector<vector<string>> rhs = proc->getRHS();
+    vector<int> replacedVecIndicesToBeDeleted;
+    // Stored right hand side in len to stop the replace after consuming the original rhs.
+    unsigned int len = rhs.size();
+    for (unsigned int i = 0; i < len; ++i) {
         for (unsigned int j = 0; j < rhs[i].size(); ++j) {
-            if (isNonTerminal(rhs[i][j]) &&
-                matchNonTerminals((string) rhs[i][j], nonTerminalToInsert)) {
-                insertIntoRHS(j, i, toInsert->getRHS());
-                indicesToRemove.push_back(i);
+            if (isNonTerminal(rhs[i][j], CFG::checked) && match(rhs[i][j], nonTtoPutIn)) {
+                insertIntoRHS(j, i, putIn->getRHS(), rhs);
+                replacedVecIndicesToBeDeleted.push_back(i);
                 break;
             }
         }
     }
-
-    for (auto it = indicesToRemove.rbegin(); it != indicesToRemove.rend(); ++it) {
-        rhs.erase(rhs.begin() + *it);
-    }
-
-    // Set the modified rhs back to the target production
-    target->setRHS(rhs);
+    removeIndicesFromVector(rhs, replacedVecIndicesToBeDeleted);
+    proc->setRHS(rhs);
 }
 
-bool CFG::hasLeftRecursion(Production *production) {
-    for (vector<string> elemVector: production->getRHS()) {
-        if (isNonTerminal(elemVector.front()) &&
-            matchNonTerminals((string) elemVector.front(), production->getLHS())) {
+bool leftRecursionExist(Production *proc) {
+    for (vector<string> v: proc->getRHS()) {
+        if (isNonTerminal(v.front(), CFG::checked) && match(v.front(), proc->getLHS())) {
             return true;
         }
     }
     return false;
 }
 
-Production *CFG::eliminateImmediateLeftRecursion(Production *production) {
-    string newLHS = (production->getLHS() + newNonTMark);
+// A --> Ac | Aad | bd | f
+// A --> bdA# | fA#
+// A# --> cA# | adA# | Epsilon
+Production *eliminateImmediateLeftRecursion(Production *proc) {
+    auto newLHS = (proc->getLHS() + newNonTMark);
     vector<vector<string>> startWithLHS;
-
-    vector<vector<string>> rhs = production->getRHS();
-    string ff = "";
-    for (auto vectorIterator = rhs.begin(); vectorIterator != rhs.end();) {
-        if (isNonTerminal(vectorIterator->front()) &&
-            matchNonTerminals((string) vectorIterator->front(), production->getLHS())) {
-            vectorIterator->erase(vectorIterator->begin());
-            vectorIterator->push_back(newLHS);
-            startWithLHS.push_back(*vectorIterator);
-            rhs.erase(vectorIterator);
+    vector<vector<string>> rhs = proc->getRHS();
+    for (auto vecIt = rhs.begin(); vecIt != rhs.end();) {
+        if (isNonTerminal(vecIt->front(), CFG::checked) && match((string) vecIt->front(), proc->getLHS())) {
+            vecIt->erase(vecIt->begin());
+            vecIt->push_back(newLHS);
+            startWithLHS.push_back(*vecIt);
+            rhs.erase(vecIt);
         } else {
-            vectorIterator->push_back(newLHS);
-            ++vectorIterator;
+            vecIt->push_back(newLHS);
+            ++vecIt;    // Only increment when not erasing from vector.
         }
     }
-
     if (rhs.empty()) {
-        cout << "Left recursion cannot be eliminated from this production.\n" << production->toString();
+        cout << "Left recursion can not be eliminated from this production.\n" << proc->toString();
         exit(1);
     }
-
-    production->setRHS(rhs);
+    proc->setRHS(rhs);
     startWithLHS.push_back({EPSILON});
     return new Production(newLHS, startWithLHS);
 }
 
 void CFG::eliminateLeftRecursion() {
+    checked = this->nonTerminalMap;
     vector<Production *> resultOfImmediateRecursion;
-    this->nonTerminalMap = nonTerminalMap;
-    for (unsigned int i = 0; i < productions.size(); ++i) {
+    for (unsigned int i = 0; i < rules.size(); ++i) {
         for (unsigned int j = 0; j < i; ++j) {
-            replaceProduction(productions[j], productions[i]);
+            replaceProduction(rules[j], rules[i]);
         }
-
-        if (hasLeftRecursion(productions[i])) {
-            Production *newProduction = eliminateImmediateLeftRecursion(productions[i]);
-            resultOfImmediateRecursion.push_back(newProduction);
+        if (leftRecursionExist(rules[i])) {
+            Production *newProc = eliminateImmediateLeftRecursion(rules[i]);
+            resultOfImmediateRecursion.push_back(newProc);
         }
     }
-
-    productions.insert(productions.end(), resultOfImmediateRecursion.begin(), resultOfImmediateRecursion.end());
+    this->rules.insert(this->rules.end(), resultOfImmediateRecursion.begin(), resultOfImmediateRecursion.end());
 }
 
 void CFG::eliminateLeftRefactoring() {
-    pair<unsigned int, unsigned int> productionPair = {1, 0};
-
-    for (unsigned int i = 0; i < productions.size(); ++i) {
-        vector<vector<string>> rhs = productions[i]->getRHS();
-        vector<int> commonElemIndicesContainer = findCommonElemIndices(rhs);
-
-        if (commonElemIndicesContainer.size() != 0) {
-            if (productionPair.second != i) {
-                productionPair.first = 1;
+    pair<unsigned int, unsigned int> pair = {1, 0};
+    for (unsigned int i = 0; i < rules.size(); ++i) {
+        vector<vector<string>> rhs = rules[i]->getRHS();
+        vector<int> commonElemContainer = commonElemIndeces(
+                rhs); //vector for indexes for which components has the same commonElem
+        if (commonElemContainer.size() != 0) {
+            if (pair.second != i) {
+                pair.first = 1;
             }
-
-            int countOfCommonElements = countCommon(commonElemIndicesContainer, rhs);
+            int CountOFCommonElements = countCommon(commonElemContainer, rhs);
             vector<string> commonElems;
-
-            for (unsigned int ii = 0; ii < countOfCommonElements; ii++) {
-                commonElems.push_back(rhs[commonElemIndicesContainer[0]][ii]);
+            for (unsigned int ii = 0; ii < CountOFCommonElements; ii++) {
+                commonElems.push_back(rhs[commonElemContainer[0]][ii]);
             }
-
             vector<vector<string>> newRhs;
-
-            for (unsigned int ii = 0; ii < commonElemIndicesContainer.size(); ii++) {
-                vector<string> myVector = rhs[commonElemIndicesContainer[ii]];
-                myVector.erase(myVector.begin(), myVector.begin() + countOfCommonElements);
-
-                if (myVector.empty()) {
-                    myVector.push_back(EPSILON);
+            for (unsigned int ii = 0; ii < commonElemContainer.size(); ii++) {
+                vector<string> myvec = rhs[commonElemContainer[ii]];
+                myvec.erase(myvec.begin(), myvec.begin() + CountOFCommonElements);
+                if (myvec.empty()) {
+                    myvec.push_back(EPSILON);
                 }
-
-                newRhs.push_back(myVector);
+                newRhs.push_back(myvec);
             }
-            //////////////////////
-            removeRHS(newRhs, commonElemIndicesContainer);
-            //productions[i].removeRHS(commonElemIndicesContainer);
-            string newLHS = (productions[i]->getLHS() + string(productionPair.first++, factoringMark));
-            productionPair.second = i;
+            removeIndicesFromVector(rhs, commonElemContainer);
+            auto newLHS = (rules[i]->getLHS() + string(pair.first++, factoringMark));
+            pair.second = i;
             commonElems.push_back(newLHS);
-            newRhs.push_back(commonElems);
-            productions[i]->setRHS(newRhs);
-            Production *newProduction = new Production(newLHS, newRhs);
-            productions.push_back(newProduction);
+            rhs.push_back(commonElems);
+            rules[i]->setRHS(rhs);
+            Production *newProc = new Production(newLHS, newRhs);
+            rules.push_back(newProc);
             i--;
         }
+
     }
 }
 
-vector<int> CFG::findCommonElemIndices(vector<vector<string>> rhs) {
+vector<int> CFG::commonElemIndeces(vector<vector<string>> rhs) {
     string commonElem;
-    vector<int> commonElemIndicesContainer;
-
+    vector<int> commonElemContainer;
     for (unsigned int j = 0; j < rhs.size(); j++) {
         commonElem = rhs[j][0];
-        commonElemIndicesContainer.push_back(j);
-
+        commonElemContainer.push_back(j);
         for (unsigned int k = j + 1; k < rhs.size(); k++) {
             if (commonElem == rhs[k][0]) {
-                commonElemIndicesContainer.push_back(k);
+                commonElemContainer.push_back(k);
             }
         }
-
-        if (commonElemIndicesContainer.size() > 1) {
+        if (commonElemContainer.size() > 1) {
             break;
         } else {
-            commonElemIndicesContainer.clear();
+            commonElemContainer.clear();
         }
     }
-
-    return commonElemIndicesContainer;
+    return commonElemContainer;
 }
 
-int CFG::countCommon(std::vector<int> commonElemIndicesContainer, vector<vector<string>> rhs) {
-    unsigned int countOfCommonElements = 1;
+int CFG::countCommon(std::vector<int> commonElemContainer, vector<vector<string>> rhs) {
+    unsigned int CountOFCommonElements = 1;
     bool flag = true;
-
     while (flag) {
-        for (unsigned int ii = 1; ii < commonElemIndicesContainer.size(); ii++) {
-            if (countOfCommonElements < rhs[commonElemIndicesContainer[ii]].size() &&
-                countOfCommonElements < rhs[commonElemIndicesContainer[0]].size()) {
-                if (rhs[commonElemIndicesContainer[0]][countOfCommonElements] !=
-                    rhs[commonElemIndicesContainer[ii]][countOfCommonElements]) {
+        for (unsigned int ii = 1; ii < commonElemContainer.size(); ii++) {
+            if (CountOFCommonElements < rhs[commonElemContainer[ii]].size() &&
+                CountOFCommonElements < rhs[commonElemContainer[0]].size()) {
+                if (rhs[commonElemContainer[0]][CountOFCommonElements] !=
+                    rhs[commonElemContainer[ii]][CountOFCommonElements]) {
                     flag = false;
                 }
             } else {
@@ -199,11 +185,10 @@ int CFG::countCommon(std::vector<int> commonElemIndicesContainer, vector<vector<
         }
 
         if (flag) {
-            countOfCommonElements++;
+            CountOFCommonElements++;
         }
     }
-
-    return countOfCommonElements;
+    return CountOFCommonElements;
 }
 
-vector<Production*> CFG::getProcs() { return this->productions; }
+vector<Production *> CFG::getProcs() { return this->rules; }

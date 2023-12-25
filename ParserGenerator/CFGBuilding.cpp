@@ -18,6 +18,17 @@ void CFGBuilding::CFGBuilder(const string &path, const vector<string> &tokens) {
         }
         buildCFG();
     }
+    cout<<"nonTerminal: ("<<this->orderedNonTerminal.size()<<")";
+    for (const auto &element : this->orderedNonTerminal) {
+        std::cout << element << " ";
+    }
+    std::cout << std::endl;
+    cout<<"Terminal: ("<<this->terminalMap.size()<<")";
+    for (const auto &element : this->terminalMap) {
+        std::cout << element << " ";
+    }
+    std::cout << std::endl;
+
 }
 
 
@@ -77,11 +88,11 @@ RHSState CFGBuilding::checkRHS(string line) {
     vector<vector<string>> rhs;
     string buffer;
     bool terminalFlag = false;
-    rhs.push_back(vector<string>());
+    rhs.emplace_back();
     unsigned int currVec = 0;
 
     for (char c: line) {
-        if (c == 0x27 || c == 0x91 || c == 0x92) {
+        if (c == 0x27 || c == 0x91 || c == 0x92 || c =='\'') {
             if (terminalFlag) {
                 terminalFlag = false;
                 if (buffer == "epsilon" || buffer == "EPSILON" || buffer == "\\L") {
@@ -103,7 +114,7 @@ RHSState CFGBuilding::checkRHS(string line) {
             rhs.push_back(vector<string>());
             currVec++;
             buffer = "";
-        } else if (c == ' ' && !terminalFlag) {
+        } else if (c == ' ') {
             if (!buffer.empty()) {
                 rhs[currVec].push_back(addNonTerminal(buffer));
             }
@@ -113,7 +124,7 @@ RHSState CFGBuilding::checkRHS(string line) {
         }
     }
 
-    if (!buffer.empty() && !terminalFlag) {
+    if (!buffer.empty()) {
         rhs[currVec].push_back(addNonTerminal(buffer));
     }
 
@@ -140,7 +151,6 @@ string CFGBuilding::getLastProductionLHS() {
     return this->productionRules.back()->getLHS();
 }
 
-
 string CFGBuilding::checkLHS(string &line, unsigned int &index) {
     string lhs;
     while (index < line.size() && line[index] != '=') {
@@ -148,6 +158,7 @@ string CFGBuilding::checkLHS(string &line, unsigned int &index) {
         index++;
     }
     if (!lhs.empty() && line[index] == '=') {
+        extract(lhs);
         return lhs;
     }
     return "";
@@ -156,7 +167,7 @@ string CFGBuilding::checkLHS(string &line, unsigned int &index) {
 string CFGBuilding::addNonTerminal(string prodKey) {
     extract(prodKey);
     auto it = this->nonTerminalMap.find(prodKey);
-    if (it->empty()) {
+    if (it == this->nonTerminalMap.end()) {
         nonTerminalMap.insert(prodKey);
         orderedNonTerminal.push_back(prodKey);
     }

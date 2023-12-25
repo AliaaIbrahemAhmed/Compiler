@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <set>
 #include "utilities.h"
 
 string extract(string &str) {
@@ -23,3 +24,6 @@ void removeSpaces(string &str) {
 void printErrorMessage(const string& message) {
     cout << "Error: " << message << endl;
 }
+bool isNonTerminal(string symbol, set<string> nonTerminalMap) {
+    return nonTerminalMap.find(symbol) != nonTerminalMap.end();
+};
