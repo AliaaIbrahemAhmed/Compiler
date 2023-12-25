@@ -7,9 +7,23 @@
 
 Parser::Parser(vector<Production> &rules, unordered_map<string, vector<string>> &first,
                unordered_map<string, vector<Production>> &firstProductionMap,
-               unordered_map<string, vector<string>> &follow) : rules(rules), first(first),
-                                                                firstProductionMap(firstProductionMap),
-                                                                follow(follow) {}
+               unordered_map<string, vector<string>> &follow,
+               string& startingNonTerminal) : rules(rules), first(first),
+                                              firstProductionMap(firstProductionMap),
+                                              follow(follow),
+                                              startNonTerminal(startingNonTerminal){
+    this->stack.push_back("$");
+    this->stack.push_back(startingNonTerminal);
+}
+
+void Parser::setTerminals(const set<string> &terminals) {
+    Parser::terminals = terminals;
+}
+
+void Parser::setNonTerminals(const set<string> &nonTerminals) {
+    Parser::nonTerminals = nonTerminals;
+}
+
 
 void Parser::constructTable(){
     for(Production production : this->rules){
@@ -60,15 +74,15 @@ string Parser::getRhsExpr(vector<string> rhs){
     );
 }
 
-void Parser::tableToCsv(set<string> nonTerminals, set<string> terminals){
+void Parser::tableToCsv(){
     std::ofstream csvFile("parsingTable.csv");
     // Write the table content
     csvFile << ",";
-    for(const auto &terminal : terminals){
+    for(const auto &terminal : this->terminals){
         csvFile << terminal << ",";
     }
     csvFile << "\n";
-    for (const auto &nonTerminal : nonTerminals) {
+    for (const auto &nonTerminal : this->nonTerminals) {
         csvFile << nonTerminal << ",";
         for (const auto &terminal : terminals) {
             auto it = parsingTable[nonTerminal].find(terminal);
@@ -85,6 +99,72 @@ void Parser::tableToCsv(set<string> nonTerminals, set<string> terminals){
     // Close the file
     csvFile.close();
 }
+
+
+void Parser::parse(string &token){
+    ofstream file("LeftParsing.txt");
+    while(true) {
+        string term = this->stack.back();
+        if(this->isTerminal(term)){
+            //case is epsilon pop and continue parsing
+            this->stack.pop_back();
+            if(term == EPSILON)
+                continue;
+
+            // Report Error
+            if(term != token){
+                cout << "Error: missing " + term << endl;
+                continue;
+            }
+            if(term == token){
+                if(token != "$") this->parsedTerminals.push_back(token);
+                else this->writeToFile(file);
+                break;
+            }
+        }
+        //NonTerminal case
+        //Empty Entry
+        if(this->parsingTable[term].find(token) == this->parsingTable[term].end()){
+            //discard token
+            cout << "Error: (illegal " + term + ") -discard " << token << endl;
+            return;
+        }
+        //pop element from stack
+        if(this->parsingTable[term][token].getRHS()[0][0] == "Sync"){
+            cout << "Error: (Sync)" << endl;
+            this->stack.pop_back();
+        }
+        else{
+            this->writeToFile(file);
+            this->stack.pop_back();
+            vector<string> rhs = this->parsingTable[term][token].getRHS()[0];
+            for(int i = rhs.size()-1; i > -1; --i){
+                this->stack.push_back(rhs[i]);
+            }
+        }
+    }
+
+}
+
+void Parser::writeToFile(ofstream& file){
+    for(int i = 0; i < this->parsedTerminals.size(); i++){
+        cout << this->parsedTerminals[i] << " ";
+    }
+    for(int i = this->stack.size()-1; i > 0; i--){
+        cout << this->stack[i] << " ";
+    }
+    cout << endl;
+}
+
+bool Parser::isNonTerminal(string term) {
+    return this->nonTerminals.find(term) != this->nonTerminals.end();
+}
+
+bool Parser::isTerminal(string term) {
+    return this->terminals.find(term) != this->terminals.end();
+}
+
+
 
 
 

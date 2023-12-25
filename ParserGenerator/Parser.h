@@ -22,19 +22,32 @@ private:
     unordered_map<string , vector<string>> first;
     unordered_map<string , vector<Production>> firstProductionMap;
     unordered_map<string , vector<string>> follow;
+    vector<string> stack;
+    string startNonTerminal;
+    string startingNonTerminal;
     PARSING_TABLE parsingTable;
+    set<string> terminals;
+    set<string> nonTerminals;
+    vector<string> parsedTerminals;
 
 public:
     Parser(vector<Production> &rules, unordered_map<string, vector<string>> &first,
            unordered_map<string, vector<Production>> &firstProductionMap,
-           unordered_map<string, vector<string>> &follow);
+           unordered_map<string, vector<string>> &follow, string& startingNonTerminal);
 
     void constructTable();
     string getRhsExpr(vector<string> rhs);
-    void tableToCsv(set<string> nonTerminals, set<string> terminals);
     void addEntryToTable(string &lhs, Production &production, string &symbol);
     void handleFollow(string &lhs, Production &production);
+    void parse(string &token);
+    void setTerminals(const set<string> &terminals);
+    void setNonTerminals(const set<string> &nonTerminals);
+    bool isTerminal(string term);
+    bool isNonTerminal(string term);
 
+    void tableToCsv();
+
+    void writeToFile(ofstream &file);
 };
 
 
