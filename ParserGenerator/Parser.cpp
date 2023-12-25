@@ -14,6 +14,7 @@ Parser::Parser(vector<Production> &rules, unordered_map<string, vector<string>> 
                                               startNonTerminal(startingNonTerminal){
     this->stack.push_back("$");
     this->stack.push_back(startingNonTerminal);
+    this->file.open("leftRecursion.txt");
 }
 
 void Parser::setTerminals(const set<string> &terminals) {
@@ -102,7 +103,6 @@ void Parser::tableToCsv(){
 
 
 void Parser::parse(string &token){
-    ofstream file("LeftParsing.txt");
     while(true) {
         string term = this->stack.back();
         if(this->isTerminal(term)){
@@ -113,12 +113,17 @@ void Parser::parse(string &token){
 
             // Report Error
             if(term != token){
-                cout << "Error: missing " + term << endl;
+                file << "Error: missing " + term << endl;
                 continue;
             }
             if(term == token){
                 if(token != "$") this->parsedTerminals.push_back(token);
-                else this->writeToFile(file);
+                else{
+                    this->writeToFile();
+                    this->file.close();
+
+
+                }
                 break;
             }
         }
@@ -126,16 +131,16 @@ void Parser::parse(string &token){
         //Empty Entry
         if(this->parsingTable[term].find(token) == this->parsingTable[term].end()){
             //discard token
-            cout << "Error: (illegal " + term + ") -discard " << token << endl;
+            file << "Error: (illegal " + term + ") -discard " << token << endl;
             return;
         }
         //pop element from stack
         if(this->parsingTable[term][token].getRHS()[0][0] == "Sync"){
-            cout << "Error: (Sync)" << endl;
+            file << "Error: (Sync)" << endl;
             this->stack.pop_back();
         }
         else{
-            this->writeToFile(file);
+            this->writeToFile();
             this->stack.pop_back();
             vector<string> rhs = this->parsingTable[term][token].getRHS()[0];
             for(int i = rhs.size()-1; i > -1; --i){
@@ -146,14 +151,15 @@ void Parser::parse(string &token){
 
 }
 
-void Parser::writeToFile(ofstream& file){
+
+void Parser::writeToFile(){
     for(int i = 0; i < this->parsedTerminals.size(); i++){
-        cout << this->parsedTerminals[i] << " ";
+        this->file << this->parsedTerminals[i] << " ";
     }
     for(int i = this->stack.size()-1; i > 0; i--){
-        cout << this->stack[i] << " ";
+        this->file << this->stack[i] << " ";
     }
-    cout << endl;
+    this->file << endl;
 }
 
 bool Parser::isNonTerminal(string term) {

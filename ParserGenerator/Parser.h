@@ -29,6 +29,7 @@ private:
     set<string> terminals;
     set<string> nonTerminals;
     vector<string> parsedTerminals;
+    ofstream file;
 
 public:
     Parser(vector<Production> &rules, unordered_map<string, vector<string>> &first,
@@ -44,10 +45,8 @@ public:
     void setNonTerminals(const set<string> &nonTerminals);
     bool isTerminal(string term);
     bool isNonTerminal(string term);
-
     void tableToCsv();
-
-    void writeToFile(ofstream &file);
+    void writeToFile();
 };
 
 
