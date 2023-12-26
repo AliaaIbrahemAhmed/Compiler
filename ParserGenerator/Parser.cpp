@@ -5,7 +5,7 @@
 #include <fstream>
 #include "Parser.h"
 
-Parser::Parser(vector<Production> &rules, unordered_map<string, vector<string>> &first,
+Parser::Parser(vector<Production*> &rules, unordered_map<string, vector<string>> &first,
                unordered_map<string, vector<Production>> &firstProductionMap,
                unordered_map<string, vector<string>> &follow,
                string& startingNonTerminal) : rules(rules), first(first),
@@ -21,13 +21,15 @@ void Parser::setTerminals(const set<string> &terminals) {
     Parser::terminals = terminals;
 }
 
-void Parser::setNonTerminals(const set<string> &nonTerminals) {
+void Parser::setNonTerminals(const vector<string> &nonTerminals) {
     Parser::nonTerminals = nonTerminals;
 }
 
 
 void Parser::constructTable(){
-    for(Production production : this->rules){
+    for(Production* productionPointer : this->rules){
+
+        Production production = *productionPointer;
         string lhs = production.getLHS();
         bool hasEpsilon = false;
         vector<string> firstVec = this->first[lhs];
@@ -80,7 +82,13 @@ void Parser::tableToCsv(){
     // Write the table content
     csvFile << ",";
     for(const auto &terminal : this->terminals){
-        csvFile << terminal << ",";
+        if(terminal == ","){
+
+            csvFile << + "\"" + terminal + "\"" << ",";
+        }
+        else {
+            csvFile << terminal << ",";
+        }
     }
     csvFile << "\n";
     for (const auto &nonTerminal : this->nonTerminals) {
@@ -160,10 +168,6 @@ void Parser::writeToFile(){
         this->file << this->stack[i] << " ";
     }
     this->file << endl;
-}
-
-bool Parser::isNonTerminal(string term) {
-    return this->nonTerminals.find(term) != this->nonTerminals.end();
 }
 
 bool Parser::isTerminal(string term) {

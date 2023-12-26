@@ -9,7 +9,7 @@
 #include<unordered_map>
 #include <set>
 #include<iostream>
-#include "NFATODFA.h"
+#include "phase1/NFATODFA.h"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ using PARSING_TABLE =  unordered_map<string,  unordered_map<string, Production>>
 
 class Parser{
 private:
-    vector<Production> rules;
+    vector<Production*> rules;
     unordered_map<string , vector<string>> first;
     unordered_map<string , vector<Production>> firstProductionMap;
     unordered_map<string , vector<string>> follow;
@@ -27,12 +27,12 @@ private:
     string startingNonTerminal;
     PARSING_TABLE parsingTable;
     set<string> terminals;
-    set<string> nonTerminals;
+    vector<string> nonTerminals;
     vector<string> parsedTerminals;
     ofstream file;
 
 public:
-    Parser(vector<Production> &rules, unordered_map<string, vector<string>> &first,
+    Parser(vector<Production*> &rules, unordered_map<string, vector<string>> &first,
            unordered_map<string, vector<Production>> &firstProductionMap,
            unordered_map<string, vector<string>> &follow, string& startingNonTerminal);
 
@@ -42,9 +42,8 @@ public:
     void handleFollow(string &lhs, Production &production);
     void parse(string &token);
     void setTerminals(const set<string> &terminals);
-    void setNonTerminals(const set<string> &nonTerminals);
+    void setNonTerminals(const vector<string> &nonTerminals);
     bool isTerminal(string term);
-    bool isNonTerminal(string term);
     void tableToCsv();
     void writeToFile();
 };
