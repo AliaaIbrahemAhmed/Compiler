@@ -15,7 +15,7 @@ using namespace std;
 
 
 int main() {
-    Input input = *new Input("/home/aliaa/CLionProjects/Compiler/input.txt");
+    /*Input input = *new Input("/home/aliaa/CLionProjects/Compiler/input.txt");
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
     DFAMinimization DFAminimization;
@@ -63,7 +63,7 @@ int main() {
     matcher.match(tokens, minimizedRes);
     set<string> symbol_table = matcher.get_symbol_table();
     CFGBuilding.CFGBuilder("/home/aliaa/CLionProjects/Compiler/ParserGenerator/rules.txt", matcher.tokensName);
-    /********/
+    *//********//*
     // Assuming productionRules is a vector<Production*>
     for (const auto &production: CFGBuilding.getProductionRules()) {
         // Get the lhs and rhs of each Production
@@ -87,8 +87,33 @@ int main() {
     cout << "Symbol Table:" << endl;
     for (const string &symbol: symbol_table) {
         cout << symbol << endl;
-    }
-    FirstAndFollow firstAndFollow = *new FirstAndFollow(CFGBuilding.terminalMap, CFGBuilding.nonTerminalMap,
-                                                        CFGBuilding.getOrderedNonTerminal(), CFGBuilding.rulesMapping);
+    }*/
+    set<string> terminals = {"+","*","(",")","id"};
+    set<string> nonTerminals = {"E","E'","T","T'","F"};
+    vector<string> orderedNonTerminals = {"E","E'","T","T'","F"};
+    unordered_map<basic_string<char>, Production *> rulesMap;
+    Production p1 = *new Production("E", *new vector<vector<string>>);
+    p1.addToRHS({{"T", "E'"}});
+
+    Production p2 = *new Production("E'", *new vector<vector<string>>);
+    p2.addToRHS({{"+", "T","E'"},
+                 {EPSILON}});
+
+    Production p3 = *new Production("T", *new vector<vector<string>>);
+    p3.addToRHS({{"F", "T'"}});
+
+    Production p4 = *new Production("T'", *new vector<vector<string>>);
+    p4.addToRHS({{"*","F","T'"},
+                 {EPSILON}});
+
+    Production p5 = *new Production("F", *new vector<vector<string>>);
+    p5.addToRHS({{"(", "E", ")"},
+                 {"id"}});
+
+    vector<Production *> p = {&p1, &p2, &p3, &p4, &p5};
+
+    FirstAndFollow firstAndFollow = *new FirstAndFollow(terminals,
+                                                        orderedNonTerminals, p);
     firstAndFollow.generateFirstAndFollow();
+    firstAndFollow.printFirstAndFollow();
 }

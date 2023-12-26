@@ -13,11 +13,12 @@
 #define EPSILON "\\L"
 
 
-FirstAndFollow::FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
+FirstAndFollow::FirstAndFollow(const set<string> &terminalMap,
                                const vector<string> &orderedNonTerminal, vector<Production *> rules)
         : terminalMap(
-        terminalMap), nonTerminalMap(nonTerminalMap), orderedNonTerminal(orderedNonTerminal), rules(std::move(
+        terminalMap), orderedNonTerminal(orderedNonTerminal), rules(std::move(
         rules)) {
+    nonTerminalMap = *new set<string>(orderedNonTerminal.begin(), orderedNonTerminal.end());
     generateRulesMapping();
 }
 void FirstAndFollow::printFirstAndFollow() {

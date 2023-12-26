@@ -25,7 +25,7 @@ public:
     unordered_map<string, vector<string>> follow;
     unordered_map<string, vector<Production>> followProductionMap;
 
-    FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
+    FirstAndFollow(const set<string> &terminalMap,
                    const vector<string> &orderedNonTerminal, vector<Production *> rules);
 
 
