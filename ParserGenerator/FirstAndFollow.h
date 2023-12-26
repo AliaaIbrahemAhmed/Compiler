@@ -48,6 +48,8 @@ public:
     static bool checkForEpsilon(const vector<string>& vec);
 
     bool checkForEpsilonInFirsts(const vector<string> &rhs, int index);
+
+    void printFirstAndFollow();
 };
 
 

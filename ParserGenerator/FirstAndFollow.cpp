@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <utility>
 #include <unordered_set>
+#include <iostream>
 
 #define DollarSign "$"
 #define EPSILON "\\L"
@@ -19,7 +20,28 @@ FirstAndFollow::FirstAndFollow(const set<string> &terminalMap, const set<string>
         rules)) {
     generateRulesMapping();
 }
+void FirstAndFollow::printFirstAndFollow() {
+    // Print First sets
+    std::cout << "First Sets:\n";
+    for (const auto &nonTerminal : orderedNonTerminal) {
+        std::cout << nonTerminal << ": { ";
+        for (const auto &symbol : first[nonTerminal]) {
+            if(symbol == EPSILON) cout<< "ε";
+            else std::cout << symbol << " ";
+        }
+        std::cout << "}\n";
+    }
 
+    // Print Follow sets
+    std::cout << "\nFollow Sets:\n";
+    for (const auto &nonTerminal : orderedNonTerminal) {
+        std::cout << nonTerminal << ": { ";
+        for (const auto &symbol : follow[nonTerminal]) {
+            std::cout << symbol << " ";
+        }
+        std::cout << "}\n";
+    }
+}
 
 void removeDuplicates(std::vector<string> &vec1, std::vector<Production> &vec2) {
     std::unordered_set<string> seen;
