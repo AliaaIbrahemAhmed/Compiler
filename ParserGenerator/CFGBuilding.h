@@ -10,7 +10,7 @@
 #include <vector>
 #include <fstream>
 #include <unordered_map>
-#include "Node.h"
+#include <set>
 #include "Production.h"
 
 using namespace std;
@@ -21,6 +21,7 @@ class CFGBuilding {
 private:
     set<string> terminalMap;
     set<string> nonTerminalMap;
+    vector<string> orderedNonTerminal;
     fstream openRulesFile;
     vector<Production*> productionRules;
     RulesMap rulesMapping;
@@ -38,6 +39,7 @@ public:
     vector<Production*> getProductionRules();
     set<string> getTerminalMap();
     set<string> getNonTerminalMap();
+    vector<string> getOrderedNonTerminal();
 };
 
 

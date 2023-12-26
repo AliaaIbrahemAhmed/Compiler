@@ -3,6 +3,8 @@
 //
 
 #include <iostream>
+#include <set>
+#include <vector>
 #include "utilities.h"
 
 string extract(string &str) {
@@ -22,4 +24,13 @@ void removeSpaces(string &str) {
 
 void printErrorMessage(const string& message) {
     cout << "Error: " << message << endl;
+}
+
+bool isNonTerminal(string symbol,  vector<string> nonTerminalMap) {
+    for (const auto& item : nonTerminalMap) {
+        if (item == symbol) {
+            return true; // Symbol found in the vector
+        }
+    }
+    return false; // Symbol not found
 }

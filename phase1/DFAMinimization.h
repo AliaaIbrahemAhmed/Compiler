@@ -14,10 +14,6 @@
 #ifndef COMPILER_DFAMINIMIZATION_H
 #define COMPILER_DFAMINIMIZATION_H
 using namespace std;
-
-
-#define EPSILON "\L"
-
 class DFAMinimization {
 private:
     DFA_TRANSITION_TABLE  transitionTable;

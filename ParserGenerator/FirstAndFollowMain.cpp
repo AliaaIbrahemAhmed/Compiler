@@ -8,14 +8,16 @@
 #include "phase1/Input.h"
 #include "phase1/NFA.h"
 #include "phase1/DFAMinimization.h"
-#include "phase1/Matcher.h"
 #include "FirstAndFollow.h"
+#include "CFG.h"
+#include "phase1/Matcher.h"
 
 using namespace std;
 
 
 int main() {
-    /*Input input = *new Input("/home/aliaa/CLionProjects/Compiler/input.txt");
+    string absolutePath = "E:\\Compiler";
+    Input input = *new Input("E:\\Compiler\\input.txt");
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
     DFAMinimization DFAminimization;
@@ -28,20 +30,16 @@ int main() {
     cout << "minimized transition table with size(" << minimizedRes.DFA.size() << ")" << "\n";
     nfatodfa.printTransitionTable(minimizedRes.DFA);
     cout << res.DFA.size();
-    // Get file path input from the user
-    std::string filePath;
-    cout << "Enter the file path where you want to create the file: ";
-    getline(std::cin, filePath);
-    DFAminimization.writeFile(filePath, minimizedRes);
-    for (auto p: minimizedRes.endMap) {
-        cout << p.first.states.begin()->name << " " << p.second << endl;
-    }
-    cout << res.DFA.size();
+    DFAminimization.writeFile(absolutePath, minimizedRes);
+//    for (auto p: minimizedRes.endMap) {
+//        cout << p.first.states.begin()->name << " " << p.second << endl;
+//    }
+//    cout << res.DFA.size();
     Matcher matcher = *new Matcher();
     CFGBuilding CFGBuilding;
 
-    matcher.set_output_file_name("/home/aliaa/CLionProjects/Compiler/output.txt");
-    std::ifstream inputFile("/home/aliaa/CLionProjects/Compiler/test.txt");
+    matcher.set_output_file_name("E:\\Compiler\\output.txt");
+    std::ifstream inputFile("E:\\Compiler\\test.txt");
     if (!inputFile.is_open()) {
         std::cerr << "Error opening input file" << std::endl;
         return 1;
@@ -57,63 +55,21 @@ int main() {
             tokens.push_back(token);
         }
     }
-
     // Close the input file
     inputFile.close();
     matcher.match(tokens, minimizedRes);
     set<string> symbol_table = matcher.get_symbol_table();
-    CFGBuilding.CFGBuilder("/home/aliaa/CLionProjects/Compiler/ParserGenerator/rules.txt", matcher.tokensName);
-    *//********//*
-    // Assuming productionRules is a vector<Production*>
-    for (const auto &production: CFGBuilding.getProductionRules()) {
-        // Get the lhs and rhs of each Production
-        string lhs = production->getLHS();
-        vector<vector<string>> rhs = production->getRHS();
-
-        // Print the lhs
-        std::cout << "LHS: " << lhs << std::endl;
-
-        // Print the rhs
-        std::cout << "RHS:" << std::endl;
-        for (const auto &subVector: rhs) {
-            for (const auto &element: subVector) {
-                std::cout << element << " ";
-            }
-            std::cout << std::endl;
-        }
-
-        std::cout << std::endl;
-    }
     cout << "Symbol Table:" << endl;
     for (const string &symbol: symbol_table) {
         cout << symbol << endl;
-    }*/
-    set<string> terminals = {"+","*","(",")","id"};
-    set<string> nonTerminals = {"E","E'","T","T'","F"};
-    vector<string> orderedNonTerminals = {"E","E'","T","T'","F"};
-    unordered_map<basic_string<char>, Production *> rulesMap;
-    Production p1 = *new Production("E", *new vector<vector<string>>);
-    p1.addToRHS({{"T", "E'"}});
+    }
+    CFGBuilding.CFGBuilder("E:\\Compiler\\ParserGenerator\\rules.txt", matcher.tokensName);
 
-    Production p2 = *new Production("E'", *new vector<vector<string>>);
-    p2.addToRHS({{"+", "T","E'"},
-                 {EPSILON}});
+    CFG cfg = *new CFG(CFGBuilding.getProductionRules(), CFGBuilding.getOrderedNonTerminal());
 
-    Production p3 = *new Production("T", *new vector<vector<string>>);
-    p3.addToRHS({{"F", "T'"}});
-
-    Production p4 = *new Production("T'", *new vector<vector<string>>);
-    p4.addToRHS({{"*","F","T'"},
-                 {EPSILON}});
-
-    Production p5 = *new Production("F", *new vector<vector<string>>);
-    p5.addToRHS({{"(", "E", ")"},
-                 {"id"}});
-
-    vector<Production *> p = {&p1, &p2, &p3, &p4, &p5};
-
-    FirstAndFollow firstAndFollow = *new FirstAndFollow(terminals,
-                                                        orderedNonTerminals, p);
+    FirstAndFollow firstAndFollow = *new FirstAndFollow(CFGBuilding.getTerminalMap(),
+                                                        cfg.newNonTerminalMap, cfg.getProcs());
     firstAndFollow.generateFirstAndFollow();
     firstAndFollow.printFirstAndFollow();
+
 }

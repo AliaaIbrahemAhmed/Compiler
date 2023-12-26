@@ -124,17 +124,14 @@ mappingTransitions(const vector<unordered_set<Node>> &groups, const DfaResult df
     for (const auto &T: groups) {
         //Renaming for the states will be the first element in the partition
         Node repState = *T.begin();
-        cout << "states " << T.begin()->states.begin()->name << endl;
         representativeStates[repState] = repState;
         dd++;
         for (auto it = next(T.begin(), 1); it != T.end(); ++it) {
             representativeStates[*it] = repState;
         }
     }
-    cout << "representatioe numbers: " << dd << endl;
 
     DFA_TRANSITION_TABLE finalTransitions;
-    cout << "size of groups: " << groups.size() << endl;
     for (const auto &T: groups) {
         Node repState = representativeStates[*T.begin()];
         DFA_TRANSITIONS transitions;
