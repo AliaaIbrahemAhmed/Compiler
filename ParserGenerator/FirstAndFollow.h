@@ -44,6 +44,10 @@ public:
     pair<vector<string>, vector<Production>> getFollowOfNonTerminal(Production pd, bool isStartingSymbol);
 
     pair<vector<string>, vector<Production>> checkRulesToGetFollow(const string &nt);
+
+    static bool checkForEpsilon(const vector<string>& vec);
+
+    bool checkForEpsilonInFirsts(const vector<string> &rhs, int index);
 };
 
 
