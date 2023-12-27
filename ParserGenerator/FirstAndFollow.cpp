@@ -21,28 +21,32 @@ FirstAndFollow::FirstAndFollow(const set<string> &terminalMap,
     nonTerminalMap = *new set<string>(orderedNonTerminal.begin(), orderedNonTerminal.end());
     generateRulesMapping();
 }
-
-void FirstAndFollow::printFirstAndFollow() {
-    // Print First sets
-    std::cout << "\nFirst Sets:\n";
+void FirstAndFollow::printFirstAndFollow(ostream& output){
+    output << "-------------------------------------------------\n";
+    output << "First Sets:\n";
+    output << "-------------------------------------------------\n";
     for (const auto &nonTerminal: orderedNonTerminal) {
-        std::cout << nonTerminal << ": { ";
+        output << nonTerminal << ": { ";
         for (const auto &symbol: first[nonTerminal]) {
-            if (symbol == EPSILON) cout << "Epsilon ";
-            else std::cout << symbol << " ";
+            if (symbol == EPSILON) output << "Epsilon ";
+            else output << symbol << " ";
         }
-        std::cout << "}\n";
+        output << "}\n";
     }
 
     // Print Follow sets
-    std::cout << "\nFollow Sets:\n";
+    output << "\n-------------------------------------------------\n";
+    output << "Follow Sets:\n";
+    output << "-------------------------------------------------\n";
+
     for (const auto &nonTerminal: orderedNonTerminal) {
-        std::cout << nonTerminal << ": { ";
+        output << nonTerminal << ": { ";
         for (const auto &symbol: follow[nonTerminal]) {
-            std::cout << symbol << " ";
+            output << symbol << " ";
         }
-        std::cout << "}\n";
+        output << "}\n";
     }
+
 }
 
 void removeDuplicates(std::vector<string> &vec1, std::vector<Production> &vec2) {

@@ -43,7 +43,6 @@ void CFGBuilding::buildCFG() {
 }
 
 void CFGBuilding::decodeRule(string &line) {
-    cout<<"out line: "<<line<<endl;
     string lhs;
     unsigned int index = 0;
 
@@ -53,7 +52,6 @@ void CFGBuilding::decodeRule(string &line) {
             return;
         }
         lhs = getLastProductionLHS();
-        cout<<"lastLHS: "<<lhs<<endl;
     } else {
         lhs = checkLHS(line, index);
         if (lhs.empty()) {
@@ -152,12 +150,10 @@ string CFGBuilding::getLastProductionLHS() {
 
 string CFGBuilding::checkLHS(string &line, unsigned int &index) {
     string lhs;
-    cout<<"checkLHS(line): "<<line<<endl;
     while (index < line.size() && line[index] != '=') {
         lhs += line[index];
         index++;
     }
-    cout<<"checkLHS: "<<lhs<<endl;
     if (!lhs.empty() && line[index] == '=') {
         extract(lhs);
         addNonTerminal(lhs);

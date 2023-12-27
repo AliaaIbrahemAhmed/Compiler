@@ -12,13 +12,14 @@
 #include "CFG.h"
 #include "phase1/Matcher.h"
 #include "Parser.h"
+#include "utilities.h"
 
 using namespace std;
 
 
 int main() {
     string absolutePath = "E:\\Compiler";
-    Input input = *new Input("D:\\C\\Compiler\\input.txt");
+    Input input = *new Input(absolutePath+"\\input.txt");
     NFA nfa = *new NFA(input.lexicalRules, *new Node({*new State(false, 0, "0")}));
     NFATODFA nfatodfa = *new NFATODFA(nfa.nfa);
     DFAMinimization DFAminimization;
@@ -29,15 +30,12 @@ int main() {
     cout << "minimized transition table with size(" << minimizedRes.DFA.size() << ")" << "\n";
     cout << res.DFA.size();
     DFAminimization.writeFile(absolutePath, minimizedRes);
-//    for (auto p: minimizedRes.endMap) {
-//        cout << p.first.states.begin()->name << " " << p.second << endl;
-//    }
-//    cout << res.DFA.size();
+
     Matcher matcher = *new Matcher();
     CFGBuilding CFGBuilding;
 
-    matcher.set_output_file_name("D:\\C\\Compiler\\output.txt");
-    std::ifstream inputFile("D:\\C\\Compiler\\test.txt");
+    matcher.set_output_file_name(absolutePath+"\\output.txt");
+    std::ifstream inputFile(absolutePath+"\\test.txt");
     if (!inputFile.is_open()) {
         std::cerr << "Error opening input file" << std::endl;
         return 1;
@@ -61,18 +59,19 @@ int main() {
     for (const string &symbol: symbol_table) {
         cout << symbol << endl;
     }
-    CFGBuilding.CFGBuilder("D:\\C\\Compiler\\ParserGenerator\\rules.txt", matcher.tokensName);
+    CFGBuilding.CFGBuilder(absolutePath+"\\ParserGenerator\\rules.txt", matcher.tokensName);
 
     CFG cfg = *new CFG(CFGBuilding.getProductionRules(), CFGBuilding.getOrderedNonTerminal());
 
     FirstAndFollow firstAndFollow = *new FirstAndFollow(CFGBuilding.getTerminalMap(),
-                                                        cfg.newNonTerminalMap, cfg.getProcs());
+                                                        cfg.newNonTerminalMap, cfg.getProductions());
     firstAndFollow.generateFirstAndFollow();
-    firstAndFollow.printFirstAndFollow();
+   // firstAndFollow.printFirstAndFollow(cout);
+    printIntoFile(firstAndFollow,cfg,absolutePath);
     set<string> terminals = CFGBuilding.getTerminalMap();
     terminals.insert({"$", EPSILON});
     string start =  cfg.newNonTerminalMap[0];
-    vector<Production*> rules  = cfg.getProcs() ;
+    vector<Production*> rules  = cfg.getProductions() ;
     Parser parser = Parser( rules,
                             firstAndFollow.first,
                             firstAndFollow.firstProductionMap,

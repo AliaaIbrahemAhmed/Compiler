@@ -50,7 +50,7 @@ public:
 
     bool checkForEpsilonInFirsts(const vector<string> &rhs, int index);
 
-    void printFirstAndFollow();
+    void printFirstAndFollow(ostream& output);
 };
 
 

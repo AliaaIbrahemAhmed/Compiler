@@ -19,7 +19,7 @@ void Production::setRHS(vector<vector<string>> rhs) { this->rhs = rhs; }
 void Production::addToRHS(vector<vector<string>> anotherRHS){
     this->rhs.insert(this->rhs.end(), anotherRHS.begin(), anotherRHS.end());
 }
-string Production::Production::toString() {
+string Production::Production::castToString() {
     stringstream out;
     out << this->lhs<< " ---> ";
     for (unsigned int i = 0; i < this->rhs.size(); ++i) {

@@ -5,7 +5,11 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include <fstream>
+#include <sstream>
 #include "utilities.h"
+#include "ParserGenerator/FirstAndFollow.h"
+#include "ParserGenerator/CFG.h"
 
 string extract(string &str) {
     str.erase(0, str.find_first_not_of(' '));       //prefixing spaces
@@ -33,4 +37,21 @@ bool isNonTerminal(string symbol,  vector<string> nonTerminalMap) {
         }
     }
     return false; // Symbol not found
+}
+void printIntoFile(FirstAndFollow firstAndFollow, CFG cfg, string pathFile){
+    string filePath = pathFile + "\\firstAndFollow.txt";
+    stringstream outputStringStream;
+    cfg.printProduction(outputStringStream);
+    firstAndFollow.printFirstAndFollow(outputStringStream);
+
+    std::fstream file(filePath, std::ios::out);
+    if (file.is_open()) {
+        // Write stringstream content to the file
+        file << outputStringStream.str();
+
+        // Close the file
+        file.close();
+    } else {
+        std::cout << "Unable to open the file." << std::endl;
+    }
 }
