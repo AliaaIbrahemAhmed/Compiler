@@ -90,8 +90,10 @@ void Parser::tableToCsv(){
     csvFile << ",";
     for(const auto &terminal : this->terminals){
         if(terminal == ","){
-
             csvFile << + "\"" + terminal + "\"" << ",";
+        }
+        else if(terminal == EPSILON){
+            csvFile << "epsilon" << ",";
         }
         else {
             csvFile << terminal << ",";
@@ -103,8 +105,10 @@ void Parser::tableToCsv(){
         for (const auto &terminal : terminals) {
             auto it = parsingTable[nonTerminal].find(terminal);
             if(it != parsingTable[nonTerminal].end()) {
+                string rhs = getRhsExpr(it->second.getRHS()[0]);
+                if(rhs == EPSILON) rhs = "epsilon";
                 string production = it->second.getLHS() + " --> " +
-                                    getRhsExpr(it->second.getRHS()[0]);
+                                    rhs;
                 csvFile << production << ',';
             } else{
                 csvFile << ",";
@@ -136,8 +140,6 @@ void Parser::parse(string &token){
                 else{
                     this->writeToFile();
                     this->file.close();
-
-
                 }
                 break;
             }
@@ -150,12 +152,12 @@ void Parser::parse(string &token){
             return;
         }
         //pop element from stack
+        writeToFile();
         if(this->parsingTable[term][token].getRHS()[0][0] == "Sync"){
             file << "Error: (Sync)" << endl;
             this->stack.pop_back();
         }
         else{
-            this->writeToFile();
             this->stack.pop_back();
             vector<string> rhs = this->parsingTable[term][token].getRHS()[0];
             for(int i = rhs.size()-1; i > -1; --i){
