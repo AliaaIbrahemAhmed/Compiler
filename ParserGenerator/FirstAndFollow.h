@@ -16,7 +16,8 @@ public:
     set<string> terminalMap;
     set<string> nonTerminalMap;
     vector<string> orderedNonTerminal;
-    unordered_map<basic_string<char>, Production*> rulesMapping;
+    vector<Production *> rules;
+    unordered_map<string, Production *> rulesMapping;
 
     unordered_map<string, vector<string>> first;
     unordered_map<string, vector<Production>> firstProductionMap;
@@ -24,25 +25,31 @@ public:
     unordered_map<string, vector<string>> follow;
     unordered_map<string, vector<Production>> followProductionMap;
 
-    FirstAndFollow(const set<string> &terminalMap, const set<string> &nonTerminalMap,
-                   const vector<string> &orderedNonTerminal, unordered_map<string, Production*> rulesMapping);
+    FirstAndFollow(const set<string> &terminalMap,
+                   const vector<string> &orderedNonTerminal, vector<Production *> rules);
 
 
-    bool isInNonTerminalMap(const string& s);
+    bool isInNonTerminalMap(const string &s);
 
-    bool isInTerminalMap(const string& s);
+    bool isInTerminalMap(const string &s);
 
-    bool isNonTerminal(const vector<string>& rhs);
+    bool isNonTerminal(const vector<string> &rhs);
 
-    bool isTerminal(const vector<string>& rhs);
+    bool isTerminal(const vector<string> &rhs);
 
     void generateFirstAndFollow();
-
+    void generateRulesMapping();
     pair<vector<string>, vector<Production>> getFirstOfNonTerminal(Production pd);
 
     pair<vector<string>, vector<Production>> getFollowOfNonTerminal(Production pd, bool isStartingSymbol);
 
-    pair<vector<string>, vector<Production>> checkRulesToGetFollow(const string& nt);
+    pair<vector<string>, vector<Production>> checkRulesToGetFollow(const string &nt);
+
+    static bool checkForEpsilon(const vector<string>& vec);
+
+    bool checkForEpsilonInFirsts(const vector<string> &rhs, int index);
+
+    void printFirstAndFollow();
 };
 
 

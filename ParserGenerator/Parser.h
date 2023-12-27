@@ -46,6 +46,8 @@ public:
     bool isTerminal(string term);
     void tableToCsv();
     void writeToFile();
+
+    void handleSync(string &lhs, Production &production);
 };
 
 

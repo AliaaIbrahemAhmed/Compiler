@@ -28,7 +28,6 @@ void Parser::setNonTerminals(const vector<string> &nonTerminals) {
 
 void Parser::constructTable(){
     for(Production* productionPointer : this->rules){
-
         Production production = *productionPointer;
         string lhs = production.getLHS();
         bool hasEpsilon = false;
@@ -37,7 +36,6 @@ void Parser::constructTable(){
         for(int i = 0; i < firstVec.size(); i++){
             if(firstVec[i] == EPSILON){
                 hasEpsilon = true;
-
                 handleFollow(lhs, firstProductionMapping[i]);
                 continue;
             }
@@ -45,13 +43,14 @@ void Parser::constructTable(){
         }
         if(!hasEpsilon){
             Production syncProduction=   Production(lhs,{{"Sync"}});
-            this->handleFollow(lhs,syncProduction);
+            this->handleSync(lhs,syncProduction);
         }
     }
 }
 
 void Parser::addEntryToTable(string& lhs, Production& production, string& symbol){
     //check if there exist an entry for this non-terminal
+    cout << lhs << " " << symbol << " " << this->getRhsExpr(production.getRHS()[0])<< endl;
     if(this->parsingTable[lhs].find(symbol) != this->parsingTable[lhs].end()) {
         cout << "Ambiguity Detected!\n Not LL(1) Grammer";
         exit(1);
@@ -62,6 +61,14 @@ void Parser::addEntryToTable(string& lhs, Production& production, string& symbol
 void Parser::handleFollow(string& lhs, Production& production){
     vector<string> followSet = this->follow[lhs];
     for(string symbol : followSet){
+        this->addEntryToTable(lhs, production, symbol);
+    }
+}
+
+void Parser::handleSync(string& lhs, Production& production){
+    vector<string> followSet = this->follow[lhs];
+    for(string symbol : followSet){
+        if(this->parsingTable[lhs].find(symbol) != this->parsingTable[lhs].end()) continue;
         this->addEntryToTable(lhs, production, symbol);
     }
 }

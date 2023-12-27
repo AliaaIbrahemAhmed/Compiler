@@ -16,7 +16,7 @@
 using namespace std;
 
 
-#define EPSILON "\L"
+#define EPSILON "\\L"
 
 class DFAMinimization {
 private:

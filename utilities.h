@@ -11,6 +11,6 @@ using namespace std;
 string extract(string& str);
 void removeSpaces(string &str);
 void printErrorMessage(const string& message);
-
+bool isNonTerminal(string symbol, vector<string> nonTerminalMap);
 
 #endif //COMPILER_UTILITIES_H

@@ -15,7 +15,7 @@ private:
     vector<vector<string>> rhs;
 public:
     Production();
-    Production(string lhs, vector<vector<string>>& rhs);
+    Production(string lhs, vector<vector<string>> rhs);
 
     explicit Production(int vector);
 
@@ -25,7 +25,7 @@ public:
 
     void setRHS(vector<vector<string>> rhs);
     void addToRHS(vector<vector<string>> anotherRHS);
-
+    string toString();
 };
 
 
