@@ -6,6 +6,7 @@
 #define COMPILER_FIRSTANDFOLLOW_H
 
 
+#include <set>
 #include "CFGBuilding.h"
 
 class FirstAndFollow {
