@@ -24,7 +24,6 @@ private:
     vector<string> orderedNonTerminal;
     fstream openRulesFile;
     vector<Production*> productionRules;
-    RulesMap rulesMapping;
     string getLastProductionLHS();
     string checkLHS(string& line, unsigned int& index);
     vector<vector<string>> checkRHS(string line);
@@ -33,6 +32,8 @@ private:
     string addNonTerminal(string prodKey);
 
 public:
+    RulesMap rulesMapping;
+
     void CFGBuilder(const string& path, const vector<string>& tokens);
     void buildCFG();
     void decodeRule(string& line);

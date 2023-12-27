@@ -4,13 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "ParserGenerator/CFGBuilding.h"
-#include "phase1/Input.h"
-#include "phase1/NFA.h"
-#include "phase1/DFAMinimization.h"
-#include "FirstAndFollow.h"
-#include "CFG.h"
-#include "phase1/Matcher.h"
+
 
 using namespace std;
 
