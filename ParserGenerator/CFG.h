@@ -16,24 +16,24 @@ class CFG {
 private:
     vector<Production *> rules;
 
-    void eliminateLeftRecursion();
+    void removeLeftRecursion();
 
-    void eliminateLeftRefactoring();
+    void removeLeftRefactoring();
 
     int countCommon(std::vector<int> commonElemContainer, vector<vector<string>> rhs);
 
-    vector<int> commonElemIndeces(vector<vector<string>> rhs);
+    vector<int> getCommonIndices(vector<vector<string>> rhs);
 
 public:
     CFG();
 
-    CFG(vector<Production *> rules, vector <string> nonTerminalMap);
+    CFG(vector<Production *> rules, const vector <string>& nonTerminalMap);
 
-    vector<Production *> getProcs();
+    vector<Production *> getProductions();
     static vector <string> newNonTerminalMap;
 
     vector<string> nonTerminalMap;
-    void printChecked();
+    static void printChecked();
     void printProduction();
 };
 

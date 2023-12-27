@@ -21,13 +21,14 @@ FirstAndFollow::FirstAndFollow(const set<string> &terminalMap,
     nonTerminalMap = *new set<string>(orderedNonTerminal.begin(), orderedNonTerminal.end());
     generateRulesMapping();
 }
+
 void FirstAndFollow::printFirstAndFollow() {
     // Print First sets
-    std::cout << "First Sets:\n";
-    for (const auto &nonTerminal : orderedNonTerminal) {
+    std::cout << "\nFirst Sets:\n";
+    for (const auto &nonTerminal: orderedNonTerminal) {
         std::cout << nonTerminal << ": { ";
-        for (const auto &symbol : first[nonTerminal]) {
-            if(symbol == EPSILON) cout<< "ε";
+        for (const auto &symbol: first[nonTerminal]) {
+            if (symbol == EPSILON) cout << "Epsilon ";
             else std::cout << symbol << " ";
         }
         std::cout << "}\n";
@@ -35,9 +36,9 @@ void FirstAndFollow::printFirstAndFollow() {
 
     // Print Follow sets
     std::cout << "\nFollow Sets:\n";
-    for (const auto &nonTerminal : orderedNonTerminal) {
+    for (const auto &nonTerminal: orderedNonTerminal) {
         std::cout << nonTerminal << ": { ";
-        for (const auto &symbol : follow[nonTerminal]) {
+        for (const auto &symbol: follow[nonTerminal]) {
             std::cout << symbol << " ";
         }
         std::cout << "}\n";
@@ -105,7 +106,8 @@ pair<vector<string>, vector<Production>> FirstAndFollow::getFirstOfNonTerminal(P
                 res.second.insert(res.second.end(), nTRHSFirsts.first.size(), p);
                 k++;
             }
-            if (k < rhs.size() && isInTerminalMap(rhs[k])) {
+            if (k < rhs.size() && isInTerminalMap(rhs[k]) &&
+                checkForEpsilon(getFirstOfNonTerminal(*rulesMapping[rhs[k - 1]]).first) ) {
                 res.first.push_back(rhs[k]);
                 vector<vector<string>> newRHS;
                 newRHS.push_back(rhs);
@@ -189,7 +191,7 @@ pair<vector<string>, vector<Production>> FirstAndFollow::checkRulesToGetFollow(c
                         res.second.insert(res.second.end(), ntFirst.size(), p);
                         k++;
                     }
-                    if (k < rhs.size() && isInTerminalMap(rhs[k])) {
+                    if (k < rhs.size() && isInTerminalMap(rhs[k]) && ((k == i + 1 || checkForEpsilon(first[rhs[k - 1]])))) {
                         res.first.push_back(rhs[k]);
                         vector<vector<string>> newRHS;
                         newRHS.push_back(rhs);

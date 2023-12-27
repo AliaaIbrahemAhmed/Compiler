@@ -64,12 +64,11 @@ int main() {
         cout << symbol << endl;
     }
     CFGBuilding.CFGBuilder("E:\\Compiler\\ParserGenerator\\rules.txt", matcher.tokensName);
-
     CFG cfg = *new CFG(CFGBuilding.getProductionRules(), CFGBuilding.getOrderedNonTerminal());
     cfg.printChecked();
     cfg.printProduction();
     FirstAndFollow firstAndFollow = *new FirstAndFollow(CFGBuilding.getTerminalMap(),
-                                                        cfg.newNonTerminalMap, cfg.getProcs());
+                                                        cfg.newNonTerminalMap, cfg.getProductions());
     firstAndFollow.generateFirstAndFollow();
     firstAndFollow.printFirstAndFollow();
 
