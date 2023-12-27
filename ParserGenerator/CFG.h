@@ -34,6 +34,7 @@ public:
 
     vector<string> nonTerminalMap;
     void printChecked();
+    void printProduction();
 };
 
 #endif

@@ -231,3 +231,10 @@ void CFG::printChecked() {
         std::cout << elem << std::endl;
     }
 }
+
+void CFG::printProduction() {
+    std::cout << "Contents of 'Rules of production' set:" << std::endl;
+    for (const auto &proc: CFG::rules) {
+        cout << proc->toString() << endl;
+    }
+}

@@ -27,9 +27,9 @@ int main() {
     DfaResult minimizedRes = DFAminimization.minimization(res);
 
     nfatodfa.printTransitionTable(res.DFA);
-    cout << "minimized transition table with size(" << minimizedRes.DFA.size() << ")" << "\n";
-    nfatodfa.printTransitionTable(minimizedRes.DFA);
-    cout << res.DFA.size();
+//    cout << "minimized transition table with size(" << minimizedRes.DFA.size() << ")" << "\n";
+//    nfatodfa.printTransitionTable(minimizedRes.DFA);
+//    cout << res.DFA.size();
     DFAminimization.writeFile(absolutePath, minimizedRes);
 //    for (auto p: minimizedRes.endMap) {
 //        cout << p.first.states.begin()->name << " " << p.second << endl;
@@ -66,7 +66,8 @@ int main() {
     CFGBuilding.CFGBuilder("E:\\Compiler\\ParserGenerator\\rules.txt", matcher.tokensName);
 
     CFG cfg = *new CFG(CFGBuilding.getProductionRules(), CFGBuilding.getOrderedNonTerminal());
-
+    cfg.printChecked();
+    cfg.printProduction();
     FirstAndFollow firstAndFollow = *new FirstAndFollow(CFGBuilding.getTerminalMap(),
                                                         cfg.newNonTerminalMap, cfg.getProcs());
     firstAndFollow.generateFirstAndFollow();

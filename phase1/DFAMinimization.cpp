@@ -288,13 +288,7 @@ DfaResult DFAMinimization::minimization(const DfaResult &transitionMap) {
         }
         groups = newGroups;
     }
-    for (const auto &group: groups) {
-        std::cout << "Group:" << std::endl;
-        for (const auto &node: group) {
-            // Assuming each Node has a method 'getName()' to get its name
-            std::cout << node.states.begin()->name << std::endl;
-        }
-    }
+
     DFAMinimization::sizeMinimized = groups.size();
     std::cout << "size of final minimized group: " << groups.size() << std::endl;
     DfaResult finalRes = mappingTransitions(groups, transitionMap);
